@@ -1,19 +1,20 @@
 server:
-  port: 8099
   servlet:
-    context-path: /SistReport
+    context-path: /sistema-reporte-tiempos
 spring:
+  application:
+    name: sistreport-service
   datasource:
-    url: jdbc:sqlserver://localhost\ReporteTiempos
-    username: sa
-    password: password
+    url: jdbc:mysql://localhost:3306/sist-report
+    username: root
+    password: POIzxc01!
   jpa:
     hibernate:
       ddl-auto: update
       use-new-id-generator-mappings: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
 
 logging:
@@ -22,5 +23,26 @@ logging:
     com: INFO
     org:
       springframework:
-      # web: DEBUG
+        web: INFO
       hibernate: ERROR
+  file:
+    name: application.log
+    max-history: 1
+  pattern:
+    file: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+
+management:
+  endpoints:
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    web:
+      exposure:
+        include: '*'
+    jmx:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true

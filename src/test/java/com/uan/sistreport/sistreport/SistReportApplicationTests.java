@@ -1,4 +1,4 @@
-package com.uan.sistreport.SistReport;
+package com.uan.sistreport.sistreport;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,7 @@
-package com.uan.sistreport.SistReport;
+package com.uan.sistreport.sistreport;
 
-import com.uan.sistreport.SistReport.config.SwaggerConfiguration;
+
+import com.uan.sistreport.sistreport.config.SwaggerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -10,11 +11,10 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-@EnableJpaRepositories("com.uan.sistreport.SistReport")
+@EnableJpaRepositories("com.uan.sistreport.sistreport")
 @EnableJpaAuditing
 @Import(SwaggerConfiguration.class)
 public class SistReportApplication  implements WebMvcConfigurer {
-
 	public static void main(String[] args) {
 		SpringApplication.run(SistReportApplication.class, args);
 	}

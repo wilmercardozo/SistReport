@@ -1,4 +1,4 @@
-package com.uan.sistreport.SistReport.config;
+package com.uan.sistreport.sistreport.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
