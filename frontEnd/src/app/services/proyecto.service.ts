@@ -13,96 +13,72 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class ProyectoService {
-  url = 'http://localhost:53313/api';
-  token = '';
-  headers = {Authorization:''};
+  private headers = {Authorization: ''};
+  private controlador = 'proyecto';
 
   constructor(private http: HttpClient, private tokenStorage: TokenStorageService, private loginService: LoginService,private router: Router ) { }
 
-  nuevoProyecto(proyectoModel: ProyectoModel) {
-    this.obtenerToken();
-    const headers = this.headers;
-    return this.http.post<any>(`${this.url}/proyecto/NuevoProyecto`,
-      proyectoModel,
-      { headers })
-      .pipe(
-        map((resp: string) => {
-          return JSON.parse(resp);
-        })
-      );
+  nuevoProyecto( proyectoModel: ProyectoModel) {
+    const metodo = 'NuevoProyecto';
+    const parametros = proyectoModel;
+    return this.EnvioPeticion(metodo, parametros);
   }
 
-  editarProyecto(proyectoModel: ProyectoModel) {
-    this.obtenerToken();
-    const headers = this.headers;
-    return this.http.post<any>(`${this.url}/proyecto/EditarProyecto`,
-      proyectoModel,
-      { headers })
-      .pipe(
-        map((resp: string) => {
-          return JSON.parse(resp);
-        })
-      );
+  editarProyecto( proyectoModel: ProyectoModel) {
+    const metodo = 'EditarProyecto';
+    const parametros = proyectoModel;
+    return this.EnvioPeticion(metodo, parametros);
   }
 
-  ObtenerParametros() {
-    this.obtenerToken();
-    const headers = this.headers;
-    return this.http.post<any>(`${this.url}/proyecto/Parametros`, '', { headers })
-      .pipe(
-        map((resp) => {
-          return JSON.parse(resp);
-        })
-      );
+  ObtenerParametros( ) {
+    const metodo = 'Parametros';
+    const parametros = '';
+    return this.EnvioPeticion(metodo, parametros);
   }
 
-  ObtenerListaProyectos() {
-    this.obtenerToken();
-    const headers = this.headers;
-    return this.http.post<any>(`${this.url}/proyecto/Proyectos`, '', { headers })
-      .pipe(
-        map((resp) => {
-          return JSON.parse(resp);
-        })
-      );
+  ObtenerListaProyectos( ) {
+    const metodo = 'Proyectos';
+    const parametros = '';
+    return this.EnvioPeticion(metodo, parametros);
   }
-
+ 
   ObtenerProyecto(RegistroVenta: string) {
-    this.obtenerToken();
-    const headers = this.headers;
-    return this.http.post<any>(`${this.url}/proyecto/Proyecto`, RegistroVenta, { headers })
-      .pipe(
-        map((resp) => {
-          return JSON.parse(resp);
-        })
-      );
+    const metodo = 'Proyecto';
+    const parametros = RegistroVenta;
+    return this.EnvioPeticion(metodo, parametros);
   }
-
-  DesabilitarProyecto (RegistroVenta: string) {
+ 
+  DesabilitarProyecto(RegistroVenta: string) {
+    const metodo = 'DesabilitarProyecto';
+    const parametros = RegistroVenta;
+    return this.EnvioPeticion(metodo, parametros);
+  }
+ 
+  EnvioPeticion(metodo: string, parametros) {
     this.obtenerToken();
     const headers = this.headers;
-    return this.http.post<any>(`${this.url}/proyecto/DesabilitarProyecto`, RegistroVenta, { headers })
+    const url = `${this.tokenStorage.ObtenerURL()}/${this.controlador}/${metodo}`;
+
+    return this.http.post<any>(url, parametros, { headers })
       .pipe(
         map((resp) => {
-          return JSON.parse(resp);
+          const respJson = typeof(resp) == 'object' ?  resp : JSON.parse(resp);
+          return respJson;
         })
       );
   }
 
   obtenerToken() {
-
     this.tokenStorage.select$()
       .subscribe(resp => {
-       // this.headers = { 'Authorization': 'Bearer ' + resp };
-       var token: string=  resp == '' || resp == null || resp == undefined?  this.tokenStorage.ObtenerCookie(): resp
-       
-       token == '' || token == null || token == undefined? this.router.navigateByUrl('/login'):
-
+       const token: string =  resp === '' || resp == null || resp === undefined ?  this.tokenStorage.ObtenerCookie() : resp;
+       token === '' || token == null || token === undefined ? this.router.navigateByUrl('/login') :
        this.headers.Authorization =  'Bearer ' + token;
-
-        
       });
+    }
 
+  obtenerParametros() {
+     return this.tokenStorage.ObtenerParametros();
   }
 
 }

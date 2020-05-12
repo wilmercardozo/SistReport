@@ -1,7 +1,399 @@
-<!-- Card Components -->
+
+<div *ngIf="!gestionProyecto">
 <div class="header bg-gradient-danger pb-8 pt-5 pt-md-6">
     <div class="container-fluid">
-        <app-card-information *ngIf="showCard"></app-card-information>
+
+<div class="header-body">
+    <!-- Card stats -->
+    <div class="row">
+        <div class="col-xl-3 col-lg-6">
+            <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Total</h5>
+                            <span class="h2 font-weight-bold mb-0"> {{cardTotalHorasRegistradas}}</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                <i class="ni ni-compass-04"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0 text-muted text-sm">
+                        <span class="text-warning mr-2"> </span>
+                        <span class="text-nowrap">Horas registradas</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+            <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">PENDIENTES</h5>
+                            <span class="h2 font-weight-bold mb-0">{{cardHoraspendientes}}</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                                <i class="ni ni-compass-04"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0 text-muted text-sm">
+                        <span class="text-warning mr-2"> {{cardPorcentajePendientes}}</span>
+                        <span class="text-nowrap">Horas sin Evaluar</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+            <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">Rechazadas</h5>
+                            <span class="h2 font-weight-bold mb-0">{{cardHorasRechazadas}}</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
+                                <i class="ni ni-compass-04"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0 text-muted text-sm">
+                        <span class="text-warning mr-2"> {{cardPorcentajeRechazadas}}</span>
+                        <span class="text-nowrap">Horas Rechazadas</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+            <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase text-muted mb-0">APROBADAS</h5>
+                            <span class="h2 font-weight-bold mb-0">{{cardHorasAprobadas}}</span>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon icon-shape bg-info text-white rounded-circle shadow">
+                                <i class="ni ni-compass-04"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0 text-muted text-sm">
+                        <span class="text-warning mr-2">{{cardPorcentajeAprobadas}}</span>
+                        <span class="text-nowrap">Horas Aprobadas</span>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<p>aprobacion-horas works!</p>
+</div>
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+    <!-- Table -->
+    <div class="row">
+        <div class="col">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">{{titulopagina}}</h3>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="padding-bottom: 0px; border-color: #fff3cd; color: #856404;background: #fff3cd;">            
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-1">
+                               <strong>Filtros</strong> 
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group mb-3">                                   
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
+                                        </div>
+                                        <select 
+                                            class="form-control"
+                                             name="estado"
+                                             id.id="searchEstado"
+                                             [(ngModel)]="filtroCantidadEstado"
+                                             (ngModelChange)="filtrarRegistros()">
+                                            <option value="0">Todos Los estados </option>
+                                            <option [value]=item.idEstado *ngFor="let item of listEstado">{{item.nombreEstado}}</option>
+                                        </select>
+                                    </div>                                   
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group mb-3">                                    
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-archive-2"></i></span>
+                                        </div>
+                                        <input 
+                                            id="searchRV"
+                                            type="text" 
+                                            class="form-control"
+                                            name="search"
+                                            placeholder="Proyecto" 
+                                            [(ngModel)]="filtroProyecto"                                                                                                                  
+                                            [ngbTypeahead]="search"
+                                            (ngModelChange)="filtrarRegistros()"/>
+                                    </div>                                   
+                                </div>                               
+                            </div> 
+                        </div>
+                    </form>
+                </div>
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                <tr>                                    
+                                    <th scope="col">Proyecto</th>
+                                    <th scope="col">Horas sin evaluar</th>
+                                    <th scope="col">Horas aprobadas</th>
+                                    <th scope="col">Horas rechazadas</th>                                    
+                                    <th scope="col">Acciones</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let registroFila of listDataTable">
+                                    <th scope="row">{{ registroFila.registroVenta}}  
+                                        {{ registroFila.proyecto.length > 20 ? registroFila.proyecto.substring(0,20) : registroFila.proyecto }} 
+                                        ...
+                                    </th>
+                                    <td>
+                                        {{registroFila.cantidadRegistrados.hora}} : {{registroFila.cantidadRegistrados.minuto}}
+                                    </td>  
+                                    <td>
+                                        {{registroFila.cantidadAprobados.hora}} : {{registroFila.cantidadAprobados.minuto}}
+                                    </td>
+                                    <td>
+                                        {{registroFila.cantidadRechazados.hora}} : {{registroFila.cantidadRechazados.minuto}}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" (click)="aprobarTodo(modalConfirmacion, registroFila.registroVenta)">
+                                            <i class="ni ni-check-bold"></i> 
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" (click)="rechazarTodo(modalConfirmacion, registroFila.registroVenta)">
+                                            <i class="ni ni-fat-remove"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" (click)="gestionarProyecto(registroFila.registroVenta)">
+                                            <i class="ni ni-bold-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between p-2">
+                            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                            </ngb-pagination>                      
+                            <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                              <option [ngValue]="2">2 Registros por pagina</option>
+                              <option [ngValue]="4">4 Registros por pagina</option>
+                              <option [ngValue]="10">10 Registros por pagina</option>
+                              <option [ngValue]="50">50 Registros por pagina</option>
+                              <option [ngValue]="100">100 Registros por pagina</option>
+                            </select>
+                          </div>
+                    </div>
+                    <app-alerta-no-data *ngIf="sinData"></app-alerta-no-data>
+                    <app-loader  *ngIf="cargando"></app-loader>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div *ngIf="gestionProyecto">
+    <div class="header bg-gradient-danger pb-8 pt-5 pt-md-6">
+        <div class="container-fluid">
+        </div>
+    </div>
+    <div class="container-fluid mt--7">
+        <!-- Table -->
+        <div class="row">
+            <div class="col">
+                <div class="card shadow">
+                    <div class="card-header bg-transparent">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">{{titulopaginaGestion}}</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <button class="btn btn-sm btn-warning" (click)="volver()"> <i _ngcontent-c6="" class="ni ni-bold-left"></i> Seleccionar otro proyecto</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">                       
+                        <div class="table-responsive" *ngIf="!tablaDetalleUsuario">
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>                                    
+                                        <th scope="col">Usuario</th>
+                                        <th scope="col">Horas sin evaluar</th>
+                                        <th scope="col">Horas aprobadas</th>
+                                        <th scope="col">Horas rechazadas</th>                                    
+                                        <th scope="col">Acciones</th>                                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let registroFila of listModeloUsuario">
+                                        <th scope="row">
+                                            {{ registroFila.nombreUsuario}}                                              
+                                        </th>
+                                        <td>
+                                            {{registroFila.cantidadRegistrados}}
+                                        </td>  
+                                        <td>
+                                            {{registroFila.cantidadAprobados}}
+                                        </td>
+                                        <td>
+                                            {{registroFila.cantidadRechazados}}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success" *ngIf="registroFila.cantidadRegistrados != '00 : 00'" (click)="aprobarTodoModeloUsuario(modalConfirmacion, registroFila.idUsuario)">
+                                                <i class="ni ni-check-bold"></i> 
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" *ngIf="registroFila.cantidadRegistrados != '00 : 00'"  (click)="rechazarTodoModeloUsuario(modalConfirmacion, registroFila.idUsuario)">
+                                                <i class="ni ni-fat-remove"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-warning" *ngIf="registroFila.cantidadRegistrados != '00 : 00'"  (click)="gestionarDetalleUsuario(registroFila.idUsuario, registroFila.nombreUsuario)">
+                                                <i class="ni ni-bold-right"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between p-2">
+                                <ngb-pagination [collectionSizeModeloUsuario]="collectionSizeModeloUsuario" [(page)]="page" [pageSize]="pageSize">
+                                </ngb-pagination>                      
+                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                                  <option [ngValue]="2">2 Registros por pagina</option>
+                                  <option [ngValue]="4">4 Registros por pagina</option>
+                                  <option [ngValue]="10">10 Registros por pagina</option>
+                                  <option [ngValue]="50">50 Registros por pagina</option>
+                                  <option [ngValue]="100">100 Registros por pagina</option>
+                                </select>
+                              </div>
+                        </div>
+
+                        <hr>
+                        
+                        <div class="table-responsive" *ngIf="tablaDetalleUsuario">
+                            <div class="row align-items-center" style="margin-bottom: 1%;">
+                                <div class="col-8">
+                                    <h4 class="mb-0">{{nombreUsuarioDetalle}}</h4>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <button class="btn btn-sm btn-warning" (click)="seleccionarOtroUsuario()"> <i _ngcontent-c6="" class="ni ni-bold-left"></i>  Seleccionar otro usuario</button>
+                                </div>
+                            </div>
+                            <table class="table align-items-center table-flush">
+                                <thead class="thead-light">
+                                    <tr>                                    
+                                        <th scope="col">Proyecto</th>
+                                        <th scope="col">Actividad</th>
+                                        <th scope="col">Horas</th>
+                                        <th scope="col">Fecha Registro</th>
+                                        <th scope="col">Estado</th>                                    
+                                        <th scope="col">Acciones</th>                                    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let registroFila of listRegistroHorasUsuarioDetalle">
+                                        <th scope="row">
+                                            {{ registroFila.registroVenta}} ;
+                                            {{ registroFila.proyecto.length > 20 ? registroFila.proyecto.substring(0,20) : registroFila.proyecto }} 
+                                             ...                                            
+                                        </th>
+                                        <td>                                            
+                                                <div class="form-group">                
+                                                    <textarea class="form-control"
+                                                        name="comentario"                                                       
+                                                        disabled="disabled"
+                                                        rows="3">
+                                                    {{registroFila.actividad}}
+                                                    </textarea>
+                                                  </div>
+                                           
+                                        </td>  
+                                        <td>
+                                            {{registroFila.horas.hora}} : {{registroFila.horas.minuto}}
+                                        </td>
+                                        <td>
+                                            {{ formatearFecha(registroFila.fechaReporte)}}
+                                        </td>
+                                        <td>
+                                            {{registroFila.estadoNombre}}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success" *ngIf="registroFila.estado != 2" (click)="aprobarDetalleUsuario(modalConfirmacion, registroFila.idRegistro)">
+                                                <i class="ni ni-check-bold"></i> 
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" *ngIf="registroFila.estado != 2"  (click)="rechazarDetalleUsuario(modalConfirmacion, registroFila.idRegistro)">
+                                                <i class="ni ni-fat-remove"></i>
+                                            </button>                                            
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between p-2">
+                                <ngb-pagination [collectionSize]="collectionSizeModeloUsuarioDetalle" [(page)]="page" [pageSize]="pageSize">
+                                </ngb-pagination>                      
+                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                                  <option [ngValue]="2">2 Registros por pagina</option>
+                                  <option [ngValue]="4">4 Registros por pagina</option>
+                                  <option [ngValue]="10">10 Registros por pagina</option>
+                                  <option [ngValue]="50">50 Registros por pagina</option>
+                                  <option [ngValue]="100">100 Registros por pagina</option>
+                                </select>
+                              </div>
+                        </div>
+
+                        <app-alerta-no-data *ngIf="sinData"></app-alerta-no-data>
+                        <app-loader  *ngIf="cargando"></app-loader>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+<!-- Modal -->
+<ng-template #modalConfirmacion let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{tituloModal}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <p><strong>{{mensajeModal}}</strong></p>
+        <form *ngIf="!aprobar">
+            <div class="form-group">                
+                <textarea class="form-control"
+                    name="comentario"
+                    placeholder="Comentario de Rechazo"
+                    [(ngModel)]="comentarioRechazo"
+                    rows="3"></textarea>
+              </div>
+             <small class="control-error" >{{errorModal}}</small> 
+        </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="modal.close()">Cerrar</button>
+      <button type="button" *ngIf="!tablaDetalleUsuario" class="btn btn-outline-dark" (click)="ejecutarCalificacion(modalConfirmacion)">Confirmar</button>
+      <button type="button" *ngIf="tablaDetalleUsuario" class="btn btn-outline-dark" (click)="ejecutarCalificacionDetalle(modalConfirmacion)">Confirmar</button>
+    </div>
+  </ng-template>

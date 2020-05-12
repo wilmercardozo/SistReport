@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   recordarme: boolean;
   formGroup: FormGroup;
   alerta : boolean;
+  carga: boolean = false;
   mensajealerta: string;
 
   constructor(private loginSerivce: LoginService, private fb: FormBuilder, private router: Router) { }
@@ -38,20 +39,23 @@ export class LoginComponent implements OnInit {
     if (this.formGroup.invalid) {
       return;
     }
+    this. alerta= false;
+    this.carga= true;   
     this.loginModel = this.formGroup.value;
-
-    this.loginSerivce.login(this.loginModel).subscribe(resp => {     
-      
-      if(resp.estado){
+    this.loginSerivce.login(this.loginModel)
+      .subscribe(resp => {
+        if(resp.estado){
         this.router.navigateByUrl('/proyectos');
-      }
-      else {
+        }
+       else {
         this.alerta= true;
         this.mensajealerta= resp.mensaje1;
-      }
+        }
+        this.carga= false;
       
     }, (err) => {
       this.alerta= true;
+      this.carga= false;
       this.mensajealerta='Se presentó un problema al  validar las credenciales';
     });
 

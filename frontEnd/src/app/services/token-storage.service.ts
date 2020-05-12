@@ -10,7 +10,7 @@ import { LoginModel } from '../model/login.model';
 })
 export class TokenStorageService {
 
-  private llave: string = 'dWdvjovACPYoQx6teXTt';
+  private llave = 'dWdvjovACPYoQx6teXTt';
   private url = 'http://localhost:53313/api';
   private token = '';
   private token$ = new BehaviorSubject<string>('');
@@ -22,7 +22,7 @@ export class TokenStorageService {
   public dispatch( token, login: LoginModel ) {
 
     sessionStorage.clear();
-    sessionStorage.setItem('parametros', CryptoJS.AES.encrypt(JSON.stringify(login),this.llave).toString());
+    sessionStorage.setItem('parametros', CryptoJS.AES.encrypt(JSON.stringify(login), this.llave).toString());
     sessionStorage.setItem('cookie', CryptoJS.AES.encrypt(token, this.llave).toString());
 
     this.token = token;
@@ -31,7 +31,7 @@ export class TokenStorageService {
   }
 
   ObtenerParametros() {
-    var login = JSON.parse(CryptoJS.AES.decrypt(sessionStorage.getItem('parametros'),this.llave).toString(CryptoJS.enc.Utf8));
+    const login = JSON.parse(CryptoJS.AES.decrypt(sessionStorage.getItem('parametros'),this.llave).toString(CryptoJS.enc.Utf8));
     return login;
   }
 
