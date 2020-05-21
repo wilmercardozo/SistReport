@@ -3,40 +3,42 @@ import { HttpClient } from '@angular/common/http';
 import { TokenStorageService } from './token-storage.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { registroModel } from '../model/registro.model';
+import { ProyectoBaseModel } from '../model/proyectoBase.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SeguimientoEquipoService {
-
+export class UsuarioService {
   private headers = {Authorization: ''};
-  private controlador = 'seguimientoEquipo';
+  private controlador = 'usuario';
 
- constructor(
+  constructor(
     private http: HttpClient,
     private tokenStorage: TokenStorageService,
     private router: Router) { }
 
-    ObtenerRegistroHorasPorEquipo() {
-      const metodo = 'ObtenerRegistroHorasEquipoDeTrabajo';
-      const parametrosSesion = this.obtenerParametros();
-      const re = new registroModel();
-      re.parametro1 = parametrosSesion.usuario;
-     return this.EnvioPeticion(metodo, re);
+    ObtenerProyectos() {
+      const metodo = 'ObtenerProyectos';
+      const parametros = '';
+      return this.EnvioPeticion(metodo, parametros);
     }
 
-    ReporteHistoricoEquipo(registro:registroModel){
-      const metodo = 'ObtenerRegistroHorasHistoricoEquipoDeTrabajo';
-      const parametrosSesion = this.obtenerParametros();     
-      registro.parametro3 = parametrosSesion.usuario;     
-     return this.EnvioPeticion(metodo, registro);
+    ObtenerUsuarios() {
+      const metodo = 'ObtenerUsuarios';
+      const parametros = '';
+      return this.EnvioPeticion(metodo, parametros);
     }
 
-    ObtenerEstados(){
-      const metodo = 'ObtenerEstadosRegistroTiempos';
-      const parametros = '';     
-     return this.EnvioPeticion(metodo, parametros);
+    ActualizarProyectoBase(proyectoBase: ProyectoBaseModel ) {
+      const metodo = 'ActualizarProyectoBase';
+      const parametros = proyectoBase;
+      return this.EnvioPeticion(metodo, parametros);
+    }
+
+    EliminarProyectoBase( proyectoBase: ProyectoBaseModel ) {
+      const metodo = 'EliminarProyectoBase';
+      const parametros = proyectoBase;
+      return this.EnvioPeticion(metodo, parametros);
     }
 
     EnvioPeticion(metodo: string, parametros) {
@@ -47,8 +49,8 @@ export class SeguimientoEquipoService {
       return this.http.post<any>(url, parametros, { headers })
         .pipe(
           map((resp) => {
-            const respJson = typeof(resp) == 'object' ?  resp : JSON.parse(resp);
-          return respJson;
+            const respJson = typeof(resp) === 'object' ?  resp : JSON.parse(resp);
+            return respJson;
           })
         );
     }
@@ -60,7 +62,8 @@ export class SeguimientoEquipoService {
          token === '' || token == null || token === undefined ? this.router.navigateByUrl('/login') :
          this.headers.Authorization =  'Bearer ' + token;
         });
-      }
+
+    }
 
     obtenerParametros() {
        return this.tokenStorage.ObtenerParametros();

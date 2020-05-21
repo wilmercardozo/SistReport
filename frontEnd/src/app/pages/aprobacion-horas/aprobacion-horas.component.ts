@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { CalificacionRegistroHorasModel } from 'src/app/model/calificacionRegistroHoras.model';
 import { RergistroHoraModel } from 'src/app/model/registroHora.model';
+import { UtilesService } from 'src/app/services/utiles.service';
 
 @Component({
   selector: 'app-aprobacion-horas',
@@ -21,6 +22,8 @@ export class AprobacionHorasComponent implements OnInit {
   public showCard: boolean;
   public page = 1;
   public pageSize = 4;
+  public pageSizeUsuarios = 4;
+  public pageSizeDetalle = 4;
   public listGestionProyecto: GestionProyectoModel [] = [];
   public listGestionProyectoFiltro: GestionProyectoModel [] = [];
   public collectionSize = this.listGestionProyecto.length;
@@ -58,6 +61,9 @@ export class AprobacionHorasComponent implements OnInit {
   public nombreUsuarioDetalle = '';
   public idUsuarioModelo = 0;
   public idRegistroDetalle = 0;
+  public nombreModal = 'modalConfirmacion';
+  public msmExitoso = 'Se actualizo la información con éxito';
+  public msmError = 'Se presentó un error al actualizar la información ';
   public mensaje1 = 'Se guardo el registro con éxito';
   public mensaje2 = 'Confirmacion';
   public mensaje3 = 'Se presentó un error al guardar la información';
@@ -68,37 +74,47 @@ export class AprobacionHorasComponent implements OnInit {
 
 constructor(
     private servicio: AprobacionHorasService,
+    private utiles: UtilesService,
     private router: Router,
     private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.showCard = true;
-    this.cargando = true; 
-    this.sinData = false;
     this.ObtenerProyectos();
   }
 
-  public ObtenerProyectos() {
+  ObtenerProyectos() {
+    this.antesDePeticion();
     this.servicio.ObtenerProyectosPorUsuario()
     .subscribe(resp => {
-      if (resp.estado === true) {
-        this.listGestionProyecto = JSON.parse(resp.mensaje1) ;
-        this.collectionSize = this.listGestionProyecto.length;
-        this.armarBuscador();
-        this.filtrarRegistros();
-        this.informacionTarjetas();
-        this.obtenerEstados();
-      }
-      this.cargando = false;
-      this.sinData = this.listGestionProyecto.length == 0 ? true : false;
+        this.listGestionProyecto = typeof(resp.mensaje1) === 'object' ?  resp.mensaje1 : JSON.parse(resp.mensaje1);
+        this.despuesDepeticion(resp.estado);
 
     }, (error) => {
       console.error(error);
       this.router.navigate(['login']);
-      })
+      });
   }
 
-public armarBuscador() {
+  antesDePeticion() {
+    this.cargando = true;
+    this.sinData = false;
+  }
+
+  despuesDepeticion(estado) {
+    if (estado) {
+    this.collectionSize = this.listGestionProyecto.length;
+    this.pageSize = this.utiles.calcularPaginacion(this.listGestionProyecto.length);
+    this.armarBuscador();
+    this.filtrarRegistros();
+    this.informacionTarjetas();
+    this.obtenerEstados();
+    }
+    this.cargando = false;
+      this.sinData = this.listGestionProyecto.length === 0 ? true : false;
+  }
+
+   armarBuscador() {
   this.listGestionProyecto.forEach( prom => {
     this.fuentesBuscador.push(`${prom.registroVenta}  ${prom.proyecto}`)
   });
@@ -118,8 +134,8 @@ public armarBuscador() {
       .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
   }
 
-  public filtrarRegistros() {
-    var filtro1: GestionProyectoModel [] = [], filtro2: GestionProyectoModel [] = [];
+   filtrarRegistros() {
+    let filtro1: GestionProyectoModel [] = [], filtro2: GestionProyectoModel [] = [];
 
     switch (this.filtroCantidadEstado) {
       case '0': {
@@ -127,15 +143,18 @@ public armarBuscador() {
         break;
      }
       case '1': {
-         this.listGestionProyecto.forEach(pro => pro.cantidadRegistrados.hora > 0 || pro.cantidadRegistrados.minuto > 0 ? filtro1.push(pro) : null ); 
+         this.listGestionProyecto.forEach(pro =>
+           pro.cantidadRegistrados.hora > 0 || pro.cantidadRegistrados.minuto > 0 ? filtro1.push(pro) : null );
          break;
       }
       case '2': {
-        this.listGestionProyecto.forEach(pro => pro.cantidadAprobados.hora > 0 || pro.cantidadAprobados.minuto > 0 ? filtro1.push(pro) : null ); 
+        this.listGestionProyecto.forEach(pro =>
+           pro.cantidadAprobados.hora > 0 || pro.cantidadAprobados.minuto > 0 ? filtro1.push(pro) : null );
          break;
       }
       case '3': {
-        this.listGestionProyecto.forEach(pro => pro.cantidadRechazados.hora > 0 || pro.cantidadRechazados.minuto > 0 ? filtro1.push(pro) : null ); 
+        this.listGestionProyecto.forEach(pro =>
+           pro.cantidadRechazados.hora > 0 || pro.cantidadRechazados.minuto > 0 ? filtro1.push(pro) : null );
         break;
      }
       default: {
@@ -154,7 +173,7 @@ public armarBuscador() {
    this.collectionSize = this.listGestionProyectoFiltro.length;
   }
 
-  public informacionTarjetas() {
+   informacionTarjetas() {
     const pendientes: TiempoModel [] = [], aprobadas: TiempoModel [] = [], rechazadas: TiempoModel [] = [], total: TiempoModel [] = [];
 
     this.listGestionProyecto.forEach(pro => {
@@ -175,55 +194,27 @@ public armarBuscador() {
 
     });
 
-    this.cardTotalHorasRegistradas = this.sumarHoras(total);
-    this.cardHoraspendientes = this.sumarHoras(pendientes);
-    this.cardHorasRechazadas = this.sumarHoras(rechazadas);
-    this.cardHorasAprobadas = this.sumarHoras(aprobadas);
-    this.cardPorcentajePendientes = this.calcularPorcenta(this.cardTotalHorasRegistradas, this.cardHoraspendientes );
-    this.cardPorcentajeAprobadas = this.calcularPorcenta(this.cardTotalHorasRegistradas, this.cardHorasAprobadas );
-    this.cardPorcentajeRechazadas = this.calcularPorcenta(this.cardTotalHorasRegistradas, this.cardHorasRechazadas );
+    this.cardTotalHorasRegistradas = this.utiles.sumarHorasModeloTiempo(total);
+    this.cardHoraspendientes = this.utiles.sumarHorasModeloTiempo(pendientes);
+    this.cardHorasRechazadas = this.utiles.sumarHorasModeloTiempo(rechazadas);
+    this.cardHorasAprobadas = this.utiles.sumarHorasModeloTiempo(aprobadas);
+    this.cardPorcentajePendientes = this.utiles.calcularPorcenta(this.cardTotalHorasRegistradas, this.cardHoraspendientes );
+    this.cardPorcentajeAprobadas = this.utiles.calcularPorcenta(this.cardTotalHorasRegistradas, this.cardHorasAprobadas );
+    this.cardPorcentajeRechazadas = this.utiles.calcularPorcenta(this.cardTotalHorasRegistradas, this.cardHorasRechazadas );
   }
 
-  public sumarHoras (registroHoras: TiempoModel []) {
-    var horas = 0;
-    var minutos = 0;
-    registroHoras.forEach(element => {
-      horas = horas +  element.hora;
-      minutos = minutos + element.minuto;
-    });
-
-    horas = Math.trunc(minutos / 60) + horas;
-    minutos = minutos % 60;
-
-    var retunrHora, retunrMinuto;
-    retunrHora = horas < 10 ? `0${horas}` : horas;
-    retunrMinuto = minutos < 10 ? `0${minutos}` : minutos;
-
-    return `${retunrHora} : ${retunrMinuto}`;
-
- }
-
- public calcularPorcenta(totalHoras, horas) {
-  totalHoras= totalHoras.split(':');
-  horas= horas.split(':');
-
-  var horasTotal  = parseFloat(totalHoras[0]) + parseFloat(totalHoras[1])/ 60 ;
-  var horasAlcance  = parseFloat(horas[0]) + parseFloat(horas[1])/ 60 ;    
-  return ((horasAlcance * 100) /horasTotal).toFixed(2) + ' %';
-}
-
-  public obtenerEstados() {
+  obtenerEstados() {
     this.servicio.ObtenerEstados()
     .subscribe(resp => {
       if (resp.estado === true) {
-        this.listEstado = JSON.parse(resp.mensaje1);
+        this.listEstado = typeof(resp.mensaje1) === 'object' ?  resp.mensaje1 : JSON.parse(resp.mensaje1);
       }
     }, (error) => {
       console.error(error);
     });
   }
 
-public aprobarTodo(modal, proyecto) {
+ aprobarTodo(modal, proyecto) {
   this.tituloModal = this.mensaje2;
   this.mensajeModal = this.mensaje4;
   this.confirmacionRegistro = proyecto;
@@ -245,13 +236,13 @@ public rechazarTodo(modal, proyecto) {
 
 public ejecutarCalificacion(modal) {
   if (! this.gestionProyecto) {
-    this.CalificacionMasiva(modal);
+    this.CalificacionMasiva();
   } else {
-    this.calificacionModeloUsuario(modal);
+    this.calificacionModeloUsuario();
   }
 }
 
-public CalificacionMasiva(modal) {
+public CalificacionMasiva() {
   if (!this.aprobar) {
     if (this.comentarioRechazo.length === 0) {
       this.errorModal = this.mensaje6;
@@ -262,29 +253,31 @@ public CalificacionMasiva(modal) {
   calificacion.registroVenta = this.confirmacionRegistro;
   calificacion.aprobado = this.aprobar ? true : false;
   calificacion.comentario = this.comentarioRechazo;
-  this.enviarCalificacionMasiva(modal, calificacion);
+  this.enviarCalificacionMasiva(calificacion);
 }
 
-public enviarCalificacionMasiva(modal, calificacion: CalificacionRegistroHorasModel) {
+public enviarCalificacionMasiva(calificacion: CalificacionRegistroHorasModel) {
 
   this.servicio.CalificarRegistroHorasMasivo(calificacion)
   .subscribe(resp => {
   if (resp.estado === true) {
-    this.modalService.dismissAll(modal);
+    this.modalService.dismissAll(this.nombreModal);
     this.listGestionProyecto = this.listGestionProyecto.filter(pro => pro.registroVenta !== this.confirmacionRegistro);
     this.filtrarRegistros();
     this.comentarioRechazo = '';
+    this.utiles.notificacionExito();
   } else {
-    this.errorModal = this.mensaje7;
+    this.utiles.notificacionError();
     console.log(resp.mensaje1);
   }
 }, (error) => {
+  this.utiles.notificacionError();
   console.error(error);
 });
 
 }
 
-public calificacionModeloUsuario(modal) {
+public calificacionModeloUsuario() {
   if (!this.aprobar) {
     if (this.comentarioRechazo.length === 0) {
       this.errorModal = this.mensaje6;
@@ -292,28 +285,31 @@ public calificacionModeloUsuario(modal) {
     }
   }
   this.armarlistaRegistroPorUsuario();
-  this.enviarCalificacionPorLista(modal);
+  this.enviarCalificacionPorLista();
 }
 
-public enviarCalificacionPorLista(modal) {
+public enviarCalificacionPorLista() {
   this.servicio.CalificarRegistroHorasLista( this.listCalificacion)
   .subscribe(resp => {
   if (resp.estado === true) {
-    this.modalService.dismissAll(modal);
+    this.modalService.dismissAll(this.nombreModal);
     this.comentarioRechazo = '';
     this.listModeloUsuario = this.listModeloUsuario.filter(pro => pro.idUsuario != this.idUsuarioModelo );
     this.collectionSizeModeloUsuario = this.listModeloUsuario.length;
     this. ObtenerProyectos();
+    this.utiles.notificacionExito();
   } else {
     this.errorModal = this.mensaje7;
     console.log(resp.mensaje1);
+    this.utiles.notificacionError();
   }
 }, (error) => {
   console.error(error);
+  this.utiles.notificacionError();
 });
 }
 
-public gestionarProyecto(registroVenta) {
+ gestionarProyecto(registroVenta) {
   this.gestionProyecto = true;
   this.tablaDetalleUsuario = false;
   this.listModeloUsuario = [];
@@ -322,28 +318,30 @@ public gestionarProyecto(registroVenta) {
   this.obtenerRegistroHorasPorproyecto();
 }
 
-public volver() {
+ volver() {
   this.tablaDetalleUsuario = false;
   this.gestionProyecto = false;
 }
 
-public obtenerRegistroHorasPorproyecto() {
+ obtenerRegistroHorasPorproyecto() {
 const registro: registroModel = new registroModel();
 registro.parametro1 =  this.registroVentaModeloUsuario;
  this.servicio.ObtenerRegistroHorasPorRegistroVenta(registro)
  .subscribe(resp => {
   if (resp.estado === true) {
-    this.listRegistroHoras =  JSON.parse(resp.mensaje1);
+    this.listRegistroHoras =  typeof(resp.mensaje1) === 'object' ?  resp.mensaje1 : JSON.parse(resp.mensaje1);
+    this.collectionSizeModeloUsuario = this.listRegistroHoras.length;
     this.armarRegistroHorasPorUsuario();
   } else {
-
+    this.utiles.notificacionError();
   }
 }, (error) => {
   console.error(error);
+  this.utiles.notificacionError();
 });
 }
 
-public armarRegistroHorasPorUsuario() {
+ armarRegistroHorasPorUsuario() {
   const usuarios = [];
   this.listRegistroHoras.forEach( prom => {
     if (! usuarios.includes( prom.idUsuario) ) {
@@ -354,7 +352,8 @@ public armarRegistroHorasPorUsuario() {
   usuarios.forEach( idUsuario => {
     this.listModeloUsuario.push(this.armaModeloUsuario(idUsuario));
   });
-
+  this.collectionSizeModeloUsuario = this.listModeloUsuario.length;
+  this.pageSizeUsuarios = this.utiles.calcularPaginacion(this.listModeloUsuario.length);
 }
 
 public armaModeloUsuario(IdUsuario) {
@@ -423,11 +422,11 @@ public rechazarTodoModeloUsuario(modal, idUsuario) {
   this.errorModal = '';
 }
 
-
 public gestionarDetalleUsuario(idUsuario, nombreUsuario) {
   this.listRegistroHorasUsuarioDetalle = [];
   this.listRegistroHorasUsuarioDetalle = this.listRegistroHoras.filter(pro => pro.idUsuario == idUsuario);
   this.collectionSizeModeloUsuarioDetalle = this.listRegistroHorasUsuarioDetalle.length;
+  this.pageSizeDetalle = this.utiles.calcularPaginacion(this.listRegistroHorasUsuarioDetalle.length);
   this.tablaDetalleUsuario = true;
   this.nombreUsuarioDetalle = 'Usuario: ' + nombreUsuario;
 }
@@ -508,15 +507,18 @@ public enviarCalificacionPorListaDetalle(modal) {
   if (resp.estado === true) {
     this.modalService.dismissAll(modal);
     this.comentarioRechazo = '';
-    this.listRegistroHorasUsuarioDetalle.filter(pro => pro.idRegistro !== this.idRegistroDetalle);
+    this.listRegistroHorasUsuarioDetalle = this.listRegistroHorasUsuarioDetalle.filter(pro => pro.idRegistro !== this.idRegistroDetalle);
     this. ObtenerProyectos();
     this. obtenerRegistroHorasPorproyecto();
+    this.utiles.notificacionExito();
   } else {
     this.errorModal = this.mensaje7;
     console.log(resp.mensaje1);
+    this.utiles.notificacionError();
   }
 }, (error) => {
   console.error(error);
+  this.utiles.notificacionError();
 });
 }
 

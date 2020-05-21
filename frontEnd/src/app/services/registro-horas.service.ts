@@ -32,9 +32,9 @@ export class RegistroHorasService {
       return this.EnvioPeticion(metodo, parametros);
     }
 
-    ObtenerReglas() {
-      var metodo = 'ObtenerReglas';
-      var parametros = '';
+    ObtenerReglas(registro: registroModel) {
+      var metodo = 'ObtenerParametrosTipo';
+      var parametros = registro;
        return this.EnvioPeticion(metodo, parametros);
     }
 

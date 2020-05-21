@@ -180,13 +180,13 @@
                                         {{registroFila.cantidadRechazados.hora}} : {{registroFila.cantidadRechazados.minuto}}
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-success" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" (click)="aprobarTodo(modalConfirmacion, registroFila.registroVenta)">
+                                        <button class="btn btn-sm btn-success" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" data-toggle="tooltip" data-placement="top" title="Aprobar todos los registros" (click)="aprobarTodo(modalConfirmacion, registroFila.registroVenta)">
                                             <i class="ni ni-check-bold"></i> 
                                         </button>
-                                        <button class="btn btn-sm btn-danger" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" (click)="rechazarTodo(modalConfirmacion, registroFila.registroVenta)">
+                                        <button class="btn btn-sm btn-danger" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" data-toggle="tooltip" data-placement="top" title="Rechazar todos los registros" (click)="rechazarTodo(modalConfirmacion, registroFila.registroVenta)">
                                             <i class="ni ni-fat-remove"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-warning" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" (click)="gestionarProyecto(registroFila.registroVenta)">
+                                        <button class="btn btn-sm btn-warning" *ngIf="registroFila.cantidadRegistrados.hora > 0 && registroFila.cantidadRegistrados.minuto > 0" data-toggle="tooltip" data-placement="top" title="Detalle de registros" (click)="gestionarProyecto(registroFila.registroVenta)">
                                             <i class="ni ni-bold-right"></i>
                                         </button>
                                     </td>
@@ -274,9 +274,9 @@
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between p-2">
-                                <ngb-pagination [collectionSizeModeloUsuario]="collectionSizeModeloUsuario" [(page)]="page" [pageSize]="pageSize">
+                                <ngb-pagination [collectionSize]="collectionSizeModeloUsuario" [(page)]="page" [pageSize]="pageSizeUsuarios">
                                 </ngb-pagination>                      
-                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSizeUsuarios">
                                   <option [ngValue]="2">2 Registros por pagina</option>
                                   <option [ngValue]="4">4 Registros por pagina</option>
                                   <option [ngValue]="10">10 Registros por pagina</option>
@@ -347,9 +347,9 @@
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between p-2">
-                                <ngb-pagination [collectionSize]="collectionSizeModeloUsuarioDetalle" [(page)]="page" [pageSize]="pageSize">
+                                <ngb-pagination [collectionSize]="collectionSizeModeloUsuarioDetalle" [(page)]="page" [pageSize]="pageSizeDetalle">
                                 </ngb-pagination>                      
-                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                                <select class="custom-select" style="width: auto" [(ngModel)]="pageSizeDetalle">
                                   <option [ngValue]="2">2 Registros por pagina</option>
                                   <option [ngValue]="4">4 Registros por pagina</option>
                                   <option [ngValue]="10">10 Registros por pagina</option>
@@ -397,3 +397,40 @@
       <button type="button" *ngIf="tablaDetalleUsuario" class="btn btn-outline-dark" (click)="ejecutarCalificacionDetalle(modalConfirmacion)">Confirmar</button>
     </div>
   </ng-template>
+ <!-- card -->
+ <div role="alert" id="notifiCorrecta" aria-live="assertive" aria-atomic="true" class="toast"> 
+    <div class="toast-header">
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar" (click)="cerrarToast()">
+            <span aria-hidden="true"></span>
+        </button>        
+        <div class="row">
+            <div class="col-lg-1">
+                <div _ngcontent-c10=""><i _ngcontent-c10="" class="ni ni-bell-55">
+                 </i><span _ngcontent-c10=""></span>
+                </div> 
+            </div>
+            <div class="col-lg-10">
+                <span> {{msmExitoso}} </span>
+            </div>
+        </div>      
+    </div>
+ 
+</div>
+<div role="alert" id="notifiError" aria-live="assertive" aria-atomic="true" class="toast"> 
+    <div class="toast-header">
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar" (click)="cerrarToast()">
+            <span aria-hidden="true"></span>
+        </button>        
+        <div class="row">
+            <div class="col-lg-1">
+                <div _ngcontent-c10=""><i _ngcontent-c10="" class="ni ni-bell-55">
+                 </i><span _ngcontent-c10=""></span>
+                </div> 
+            </div>
+            <div class="col-lg-10">
+                <span>{{msmError}}</span>             
+            </div>
+        </div>      
+    </div>
+ 
+</div>

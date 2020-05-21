@@ -1,11 +1,4 @@
 <!-- Card Components -->
-
-<!-- <div class="header bg-gradient-danger pb-8 pt-5 pt-md-6">
-    <div class="container-fluid">
-        <app-card-information *ngIf="showCard"></app-card-information>
-    </div>
-</div> -->
-
 <div class="header bg-gradient-danger pb-8 pt-5 pt-md-6">
     <div class="container-fluid">
 
@@ -113,57 +106,31 @@
                             <h3 class="mb-0">{{titulopagina}}</h3>
                         </div>
                         <div class="col-4 text-right">
-                            <button class="btn btn-sm btn-primary" (click)="nuevoRegistro(modalConfirmacion)">Agregar</button>
+                            <button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Nuevo registro" (click)="nuevoRegistro()">Agregar</button>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="padding-bottom: 0px; border-color: #fff3cd; color: #856404;background: #fff3cd;">            
-                    <form>
-                        <div class="row">
-                            <div class="col-lg-1">
-                               <strong>Filtros</strong> 
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="form-group mb-3">                                   
-                                    <div class="input-group input-group-alternative">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
-                                        </div>
-                                        <select 
-                                            class="form-control"
-                                             name="idUsuario"
-                                             id.id="searchEstado"
-                                             [(ngModel)]="filtroEstado"
-                                             (ngModelChange)="filtrarRegistros()">
-                                            <option value="0">Todos Los estados </option>
-                                            <option [value]=item.idEstado *ngFor="let item of listEstado">{{item.nombreEstado}}</option>
-                                        </select>
-                                    </div>                                   
+                <div class="row align-items-center">
+                    <div class="col-8">                           
+                    </div>
+                    <div class="col-4 text-right">
+                        <div class="form-group mb-3">
+                            <div class="input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-search"></i></span>
                                 </div>
+                                <input class="form-control"
+                                 placeholder="Buscar..."
+                                 type="text"
+                                 name="buscador"
+                                 [(ngModel)]="buscador"
+                                 (ngModelChange)="filtro()">                                 
                             </div>
-                            <div class="col-lg-3">
-                                <div class="form-group mb-3">                                    
-                                    <div class="input-group input-group-alternative">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-archive-2"></i></span>
-                                        </div>
-                                        <input 
-                                            id="searchRV"
-                                            type="text" 
-                                            class="form-control"
-                                            name="search"
-                                            placeholder="Proyecto" 
-                                            [(ngModel)]="filtroRV"                                                                                                                  
-                                            [ngbTypeahead]="search"
-                                            (ngModelChange)="filtrarRegistros()"/>
-                                    </div>                                   
-                                </div>                               
-                            </div> 
                         </div>
-                    </form>
+                    </div>
                 </div>
-                    <div class="table-responsive">
+                <div class="table-responsive" *ngIf="listDataTable.length > 0">                    
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>                                    
@@ -194,13 +161,13 @@
                                         {{registroFila.estadoNombre}}
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning" (click)="copiarRegistro(modalConfirmacion, registroFila.idRegistro)">
+                                        <button class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Copiar registro" (click)="copiarRegistro(registroFila.idRegistro)">
                                             <i class="ni ni-single-copy-04"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-info" *ngIf="registroFila.estado != 2" (click)="edicionRegistro(modalConfirmacion, registroFila.idRegistro)">
+                                        <button class="btn btn-sm btn-info" *ngIf="registroFila.estado != 2" data-toggle="tooltip" data-placement="top" title="Editar registro" (click)="edicionRegistro(registroFila.idRegistro)">
                                             <i class="fa fa-pen"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger" *ngIf="registroFila.estado != 2" (click)="confirmarEliminacion(modalConfirmacion, registroFila.idRegistro)">
+                                        <button class="btn btn-sm btn-danger" *ngIf="registroFila.estado != 2" data-toggle="tooltip" data-placement="top" title="Eliminar registro" (click)="confirmarEliminacion(modalConfirmacion, registroFila.idRegistro)">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
@@ -239,6 +206,46 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-danger" (click)="modal.close()">Cerrar</button>
-      <button type="button" *ngIf="btnDesabilitar" class="btn btn-outline-dark" (click)="eliminarRegistro(modalConfirmacion)">Eliminar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="eliminarRegistro()">Eliminar</button>
     </div>
-  </ng-template>
+</ng-template>
+  <!-- card -->
+  <div role="alert" id="notifiCorrecta" aria-live="assertive" aria-atomic="true" class="toast"> 
+    <div class="toast-header">
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar" (click)="cerrarToast()">
+            <span aria-hidden="true"></span>
+        </button>        
+        <div class="row">
+            <div class="col-lg-1">
+                <div _ngcontent-c10=""><i _ngcontent-c10="" class="ni ni-bell-55">
+                 </i><span _ngcontent-c10=""></span>
+                </div> 
+            </div>
+            <div class="col-lg-10">
+                <span *ngIf="delete"> {{msmExitosoDelete}} </span>
+                <span *ngIf="!delete"> {{msmExitosoPut}} </span>
+                
+            </div>
+        </div>      
+    </div>
+ 
+</div>
+<div role="alert" id="notifiError" aria-live="assertive" aria-atomic="true" class="toast"> 
+    <div class="toast-header">
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar" (click)="cerrarToast()">
+            <span aria-hidden="true"></span>
+        </button>        
+        <div class="row">
+            <div class="col-lg-1">
+                <div _ngcontent-c10=""><i _ngcontent-c10="" class="ni ni-bell-55">
+                 </i><span _ngcontent-c10=""></span>
+                </div> 
+            </div>
+            <div class="col-lg-10">
+                <span *ngIf="delete">{{msmErrorDelete}}</span>
+                <span *ngIf="!delete">{{msmErrorPut}}</span>
+            </div>
+        </div>      
+    </div>
+ 
+</div>

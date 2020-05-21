@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { EstadoModel } from 'src/app/model/estado.model';
+import { UtilesService } from 'src/app/services/utiles.service';
 
 @Component({
   selector: 'app-seguimiento-equipos',
@@ -17,6 +18,7 @@ export class SeguimientoEquiposComponent implements OnInit {
   public showCard: boolean;
   public page = 1;
   public pageSize = 4;
+  public pageSize1 = 4;
   public listRegistroHoraEquipo: RergistroHoraModel [] = [];
   public listRegistroHorasUsuario: RergistroHoraModel [] = [];
   public listRegistroHorasUsuarioFiltro: RergistroHoraModel [] = [];
@@ -32,9 +34,14 @@ export class SeguimientoEquiposComponent implements OnInit {
   public detalle = false;
   public fuentesBuscador: []=  [];
   public listEstado: EstadoModel [] = [];
-
+  public mensajeAlerta = '';
+  public mensajeErrorData = 'Ocurrió un error al cargar los datos.';
+  public alerta= true;
+  public buscador = '';
+  
   constructor(
     private servicio: SeguimientoEquipoService,
+    private utiles: UtilesService,
     private router: Router,
     private modalService: NgbModal) { }
 
@@ -44,16 +51,17 @@ export class SeguimientoEquiposComponent implements OnInit {
     this.obtenerRegistroHorasEquipo();
   }
 
-  public obtenerRegistroHorasEquipo() {
+
+obtenerRegistroHorasEquipo() {
     this.servicio.ObtenerRegistroHorasPorEquipo()
     .subscribe(resp => {
       if (resp.estado === true) {
-        this.listRegistroHoraEquipo = JSON.parse(resp.mensaje1) ;
-        this.collectionSize = this.listRegistroHoraEquipo.length;
-        this.armarRegistroPorUsuario();
+        this.listRegistroHoraEquipo = typeof(resp.mensaje1) == 'object' ?  resp.mensaje1 : JSON.parse(resp.mensaje1);       
+        this.despuesDePEticion();
+      } else {
+        this.errorPeticion();
       }
-      this.cargando = false;
-      this.sinData = this.listRegistroHoraEquipo.length === 0 ? true : false;
+            
 
     }, (error) => {
       console.error(error);
@@ -61,7 +69,20 @@ export class SeguimientoEquiposComponent implements OnInit {
       });
   }
 
-  public armarRegistroPorUsuario() {
+despuesDePEticion() {
+    this.cargando = false;
+    this.sinData = this.listRegistroHoraEquipo.length === 0 ? true : false;
+    this.collectionSize = this.listRegistroHoraEquipo.length;
+    this.armarRegistroPorUsuario();    
+  }
+
+errorPeticion() {
+    this.cargando = false;
+    this.mensajeAlerta = this.mensajeErrorData;
+    this.alerta= true;   
+  }
+
+armarRegistroPorUsuario() {
     const usuarios = [];
     this.listRegistroHoraEquipo.forEach( prom => {
     if (! usuarios.includes( prom.idUsuario) ) {
@@ -75,7 +96,7 @@ export class SeguimientoEquiposComponent implements OnInit {
   this.collectionSize = this.listModeloPorUsuario.length;
   }
 
-  public armaModeloUsuario(IdUsuario) {
+armaModeloUsuario(IdUsuario) {
     const registroHoras: RergistroHoraModel [] = [];
     this.listRegistroHoraEquipo.forEach( prom => {
       if ( prom.idUsuario === IdUsuario) {
@@ -103,7 +124,7 @@ export class SeguimientoEquiposComponent implements OnInit {
       return modeloUsuario;
 }
 
-public sumarHorasUsuario (registroHoras: RergistroHoraModel []) {
+sumarHorasUsuario (registroHoras: RergistroHoraModel []) {
   let horas = 0;
   let minutos = 0;
 
@@ -122,16 +143,17 @@ public sumarHorasUsuario (registroHoras: RergistroHoraModel []) {
   return `${retunrHora} : ${retunrMinuto}`;
 }
 
-public detalleRegistroHoras(idUsuario: number, nombreUsuario) {
+detalleRegistroHoras(idUsuario: number, nombreUsuario) {
   this.obtenerEstados();
   this.listRegistroHorasUsuario = [];
   this.listRegistroHorasUsuario = this.listRegistroHoraEquipo.filter(pro => pro.idUsuario === idUsuario);  
- 
-  this.filtrarRegistros();
+  this.pageSize1 = this.utiles.calcularPaginacion(this.listRegistroHorasUsuario .length)
+  this.collectionSizeUsuario = this.listRegistroHorasUsuario.length;
+  this.filtro();
   this.detalle= true;
 }
 
-public obtenerEstados() {
+ obtenerEstados() {
   this.servicio.ObtenerEstados()
   .subscribe(resp => {
     if (resp.estado == true)
@@ -144,43 +166,34 @@ public obtenerEstados() {
     })
 }
 
-public formatearFecha(fecha: Date){    
+formatearFecha(fecha: Date){    
   var date = new Date(fecha);
    var nuevaFoto = date.getDate() + "/" + (date.getMonth() +1) + "/" + date.getFullYear();
   return nuevaFoto;
 }
 
-public filtrarRegistros() {
-  let filtro1: RergistroHoraModel [] = [] ;
-  let filtro2: RergistroHoraModel [] = [] ;
+filtro() {
+  let listArmado: RergistroHoraModel [] = [];
+  if (this.buscador.length ===  0 || this.buscador === undefined || this.buscador === null)
+  {
+    this.listRegistroHorasUsuarioFiltro = this.listRegistroHorasUsuario;
+    return;
+  }
 
-  if  (this.filtroEstado !== '0') {
-    this.listRegistroHorasUsuario.forEach(prom => {
-      if (prom.estado === parseInt (this.filtroEstado)) {
-        filtro1.push(prom);
-      }
+  this.listRegistroHorasUsuario.forEach(pro =>{
+    const horas = pro.horas.hora + ' : ' + pro.horas.minuto;
+    const variable =  `${pro.registroVenta} ${pro.proyecto} ${pro.actividad} ${pro.estadoNombre}  ${this.formatearFecha(pro.fechaReporte)} ${horas} `
+    variable.toLowerCase().indexOf(this.buscador) > -1 ? listArmado.push(pro): null;      
   });
-  } else {
-    filtro1 = this.listRegistroHorasUsuario;
-  }
 
-  if (this.filtroProyecto !== '' && this.filtroProyecto != null) {
-    filtro1.forEach(prom => {
-      const proyecto = prom.registroVenta + ' ' + prom.proyecto;
-      if (proyecto.indexOf(this.filtroProyecto) > -1) {
-          filtro2.push(prom);
-      }
-    });
-  }
-
-   this.listRegistroHorasUsuarioFiltro = filtro2.length === 0 ? filtro1 : filtro2;
-   this.collectionSizeUsuario = this.listRegistroHorasUsuarioFiltro.length;   
-  }
+  this.sinData = listArmado.length > 0 ? false : true; 
+  this.listRegistroHorasUsuarioFiltro = listArmado;
+  this.collectionSizeUsuario = this.listRegistroHorasUsuarioFiltro.length;    
+}
 
   get listDataTable(): RergistroHoraModel[] {    
     return this.listRegistroHorasUsuarioFiltro
       .map((data, i) => ({ id: i + 1, ...data }))
       .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
-  }  
-
+  }
 }

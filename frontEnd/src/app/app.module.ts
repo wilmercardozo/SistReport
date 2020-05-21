@@ -29,7 +29,7 @@ import { FormulariosModule } from './formularios/formularios.module';
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    AuthLayoutComponent,
+    AuthLayoutComponent    
   ],
   providers: [],
   bootstrap: [AppComponent]

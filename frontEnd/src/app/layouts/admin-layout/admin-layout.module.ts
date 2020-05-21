@@ -24,6 +24,8 @@ import { AprobacionHorasComponent } from '../../pages/aprobacion-horas/aprobacio
 import { AprobacionAutomaticosComponent } from '../../pages/aprobacion-automaticos/aprobacion-automaticos.component';
 import { HorasAutomaticasComponent } from '../../pages/horas-automaticas/horas-automaticas.component';
 import { SeguimientoEquiposComponent } from '../../pages/seguimiento-equipos/seguimiento-equipos.component';
+import { ReporteComponent } from '../../pages/reporte/reporte.component';
+import {SeguimientoEquipoReporteComponent  } from '../../pages/seguimiento-equipo-reporte/seguimiento-equipo-reporte.component';
 
 @NgModule({
   imports: [
@@ -50,7 +52,9 @@ import { SeguimientoEquiposComponent } from '../../pages/seguimiento-equipos/seg
     AprobacionHorasComponent,
     AprobacionAutomaticosComponent,
     HorasAutomaticasComponent,
-    SeguimientoEquiposComponent
+    SeguimientoEquiposComponent,
+    ReporteComponent,
+    SeguimientoEquipoReporteComponent
   ]
 })
 
