@@ -6,6 +6,7 @@ import { AutomaticoService } from 'src/app/services/automatico.service';
 import { AutomaticoModel } from 'src/app/model/automatico.model';
 import { ProyectoModel } from 'src/app/model/proyecto.model';
 import { UsuarioModel } from 'src/app/model/usuario.model';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-automatico',
@@ -37,7 +38,7 @@ export class AutomaticoComponent implements OnInit {
   public mensaje6 = 'La fecha de inicio no puede ser superior a la fecha fin o el formato  de alguna fecha no corresponde.';
   public mensaje7 = 'Debe agregar al menos un  porcentaje'; 
 
-  @Input() inputModelo: AutomaticoModel;
+  @Input() inputModelo: AutomaticoPorUsuarioModel;
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
@@ -206,11 +207,11 @@ public validarArrayControls(){
 
 public validarPorcentajes()
 {
-  const rexg = /^([0-9\.])*$/i;  
+   const rexg = /^([0-9\.])*$/i;  
   var suma = 0;
   this.formGroup.value.porcentajes.forEach(element => {   
-   
-    if (element.valor.match(rexg) === null)
+    
+    if (element.valor.toString().match(rexg) === null)
     {      
       this.mensajeAlerta1= this.mensaje1;
       return;
@@ -231,8 +232,7 @@ public validarPorcentajes()
    });
    
    if (suma > 100){
-    this.mensajeAlerta= this.mensaje3
-    return;
+    this.mensajeAlerta1= this.mensaje3   
    }
    this.porcentajeConfigurado = suma;
 }
@@ -263,7 +263,36 @@ public nuevoFormulario(){
   }
 
 public edicionFormulario(){
+  var fechaInicio= this.armarObjetoFecha(this.inputModelo.fechaInicio);
+  var fechaFin= this.armarObjetoFecha(this.inputModelo.fechaFin);
 
+  this.formGroup = this.fb.group({
+    idUsuario: [this.inputModelo.idUsuario, [Validators.required, this.validarCombo]],
+    fechaInicio: [fechaInicio, [Validators.required, Validators.maxLength(10)]],
+    fechaFin: [fechaFin, [Validators.required, Validators.maxLength(10)]],
+    porcentajes: this.fb.array([])    
+  });
+
+  this.cargarPorcentajesEdicion();
+  }
+
+  public armarObjetoFecha(fecha: Date){
+    var ObjetoFecha = {
+      year: new Date(fecha).getFullYear(),
+      month: new Date(fecha).getMonth(),
+      day: new Date(fecha).getDate()
+    } 
+    return ObjetoFecha
+  }
+  public cargarPorcentajesEdicion(){
+    const porc = this.formGroup.controls.porcentajes as FormArray;
+    this.inputModelo.listaAutomaticos.forEach(element =>{
+      porc.push(this.fb.group({
+        proyecto:element.registroVenta,
+        valor: element.porcentaje
+      }))
+
+    });    
   }
 
   public getError(controlName: string): string {    

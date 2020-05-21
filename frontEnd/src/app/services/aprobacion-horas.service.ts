@@ -1,57 +1,56 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TokenStorageService } from './token-storage.service';
-import { LoginService } from './login.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { AutomaticoModel } from '../model/automatico.model';
 import { registroModel } from '../model/registro.model';
-import { AutomaticoPorUsuarioModel } from '../model/automaticoPorUsuario.model';
+import { CalificacionRegistroHorasModel } from '../model/calificacionRegistroHoras.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AutomaticoService {
-  private headers = {Authorization:''};
-  private controlador = 'automatico';
- 
+export class AprobacionHorasService {
 
-  constructor(
-    private http: HttpClient, 
-    private tokenStorage: TokenStorageService,    
+  private headers = {Authorization: ''};
+  private controlador = 'aprobacionHoras';
+
+ constructor(
+    private http: HttpClient,
+    private tokenStorage: TokenStorageService,
     private router: Router) { }
 
 
-    ObtenerProyectos() {
-      const metodo = 'ObtenerProyectos';
-      const parametros = '';
-      return this.EnvioPeticion(metodo, parametros);
-    }  
-    
-    ObtenerUsuarios() {
-      const metodo = 'ObtenerUsuarios';
-      const parametros = '';
-      return this.EnvioPeticion(metodo, parametros);
-    }  
+    ObtenerRegistroHorasPorRegistroVenta(registro: registroModel) {
+      const metodo = 'ObtenerRegistroHorasPorRegistroVenta';
+       return this.EnvioPeticion(metodo, registro);
+    }
 
-    ObtenerAutomaticosPorUsuario() {
-      const metodo = 'ObtenerAutomaticosPorUsuario';
+    ObtenerProyectosPorUsuario() {
+      const metodo = 'ObtenerProyectosPorUsuario';
+      const parametrosSesion = this.obtenerParametros();
+      const re = new registroModel();
+      re.parametro1 = parametrosSesion.usuario;
+     return this.EnvioPeticion(metodo, re);
+    }
+
+    ObtenerEstados() {
+      const metodo = 'ObtenerEstadosRegistroTiempos';
       const parametros = '';
       return this.EnvioPeticion(metodo, parametros);
-    }    
+    }
 
-    ActualizarAutomaticosPorUsuario( automatico: AutomaticoPorUsuarioModel ) {
-      const metodo = 'GuardarAutomatico';
-      const parametros = automatico;
+    CalificarRegistroHorasLista( calificacionRegistro: CalificacionRegistroHorasModel []) {
+      const metodo = 'CalificarRegistroHorasLista';
+      const parametros = calificacionRegistro;
       return this.EnvioPeticion(metodo, parametros);
-    }  
-    
-    EliminarAutomaticosPorUsuario(registro: registroModel) {
-      const metodo = 'DesabilitarAutomatico';
-      const parametros = registro;
+    }
+
+    CalificarRegistroHorasMasivo( calificacionRegistro: CalificacionRegistroHorasModel) {
+      const metodo = 'CalificarRegistroHorasMasivo';
+      const parametros = calificacionRegistro;
       return this.EnvioPeticion(metodo, parametros);
-    } 
-       
+    }
+
     EnvioPeticion(metodo: string, parametros) {
       this.obtenerToken();
       const headers = this.headers;
@@ -79,4 +78,5 @@ export class AutomaticoService {
        return this.tokenStorage.ObtenerParametros();
     }
 
-}
+
+  }

@@ -1,7 +1,8 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { ROUTES } from '../sidebar/sidebar.component';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { MenuService } from 'src/app/services/menu.service';
+import { MenuModel } from 'src/app/model/menu.model';
 
 @Component({
   selector: 'app-navbar',
@@ -10,20 +11,26 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent implements OnInit {
   public focus;
-  public listTitles: any[];
+  public listTitles: any[]= [];
   public location: Location;
-  constructor(location: Location, private element: ElementRef, private router: Router) {
+  private menu: MenuModel [] = [];
+
+  constructor(
+    location: Location,
+     private element: ElementRef,
+     private router: Router,
+     private servicio: MenuService) {
     this.location = location;
   }
 
   ngOnInit() {
-    this.listTitles = ROUTES.filter(listTitle => listTitle);
+    this.obtenerMenu();  
   }
   getTitle() {
     let titlee = this.location.prepareExternalUrl(this.location.path());
     if (titlee.charAt(0) === '#') {
       titlee = titlee.slice(1);
-    }
+    }   
 
     for (let item = 0; item < this.listTitles.length; item++) {
       for (let pagina = 0; pagina < this.listTitles[item].paginas.length; pagina++) {
@@ -35,6 +42,21 @@ export class NavbarComponent implements OnInit {
       }
     }
     return 'Dashboard';
+  }
+
+  obtenerMenu() {
+    this.servicio.obtenerMenu()
+      .subscribe((resp) => {
+        if (resp.estado === true) {
+          this.menu= typeof(resp.mensaje1) === 'object' ?  resp : JSON.parse(resp.mensaje1);
+          this.listTitles = this.menu.filter(listTitle => listTitle);
+        }      
+
+      }, (error) => {
+        console.log(error);
+        this.router.navigate(['login']);  
+      });
+
   }
 
 }

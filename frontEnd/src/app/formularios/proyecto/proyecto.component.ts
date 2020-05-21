@@ -41,7 +41,7 @@ export class ProyectoComponent implements OnInit {
     if (this.inputproyectoModel === undefined || this.inputproyectoModel === null) {
      this.nuevoFormulario();
      this.edicion= false;
-      return
+      return;
     }
     this.edicionFormulario();
     this.edicion= true;    

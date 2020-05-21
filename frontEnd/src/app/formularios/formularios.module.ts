@@ -8,6 +8,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 
 import { ProyectoComponent } from '../formularios/proyecto/proyecto.component';
 import { AutomaticoComponent } from './automatico/automatico.component';
+import { RegistroHorasComponent } from './registro-horas/registro-horas.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { AutomaticoComponent } from './automatico/automatico.component';
   ],
   declarations: [
     ProyectoComponent,
-    AutomaticoComponent
+    AutomaticoComponent,
+    RegistroHorasComponent
   ],
   exports: [
     ProyectoComponent,

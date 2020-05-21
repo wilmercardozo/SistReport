@@ -1,49 +1,52 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TokenStorageService } from './token-storage.service';
-import { LoginModel } from '../model/login.model';
-import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { registroModel } from '../model/registro.model';
+import { ParametroModel } from '../model/parametro.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class ParametrosService {
+
   private headers = {Authorization: ''};
-  private controlador = 'login';
+  private controlador = 'parametro';
 
   constructor(
     private http: HttpClient,
-     private tokenStorage: TokenStorageService,
-     private router: Router) { }
+    private tokenStorage: TokenStorageService,
+    private router: Router) { }
 
-  login(login: LoginModel) {
-    const metodo = 'authenticate';
-    const parametros = login;
-    return this.EnvioPeticion(metodo, parametros);
+    obtenerTodosParametros() {
+      const metodo = 'ObtenerParametros';
+      const parametros = '';
+      return this.EnvioPeticion(metodo, parametros);
+    }
 
-  }
+    obtenerParametrosTipo( registro: registroModel) {
+      const metodo = 'ObtenerParametrosTipo';
+      const parametros = registro;
+      return this.EnvioPeticion(metodo, parametros);
+    }
 
-
-  private guardarToken( idToken: string, login: LoginModel ) {
-
-      this.tokenStorage.dispatch(idToken, login);
-  }
+    actualizarParametros( listParametros: ParametroModel []) {
+      const metodo = 'ActualizarParametros';
+      const parametros = listParametros;
+      return this.EnvioPeticion(metodo, parametros);
+    }
 
   EnvioPeticion(metodo: string, parametros) {
     this.obtenerToken();
     const headers = this.headers;
     const url = `${this.tokenStorage.ObtenerURL()}/${this.controlador}/${metodo}`;
 
-    return this.http.post<any>(url, parametros)
+    return this.http.post<any>(url, parametros, { headers })
       .pipe(
         map((resp) => {
-          const respJson = typeof(resp) == 'object' ?  resp : JSON.parse(resp);
-          if ( respJson.estado){
-            this.guardarToken( respJson.mensaje1, parametros);
-          } 
+          const respJson = typeof(resp) === 'object' ?  resp : JSON.parse(resp);
           return respJson;
-
         })
       );
   }
@@ -55,9 +58,12 @@ export class LoginService {
        token === '' || token == null || token === undefined ? this.router.navigateByUrl('/login') :
        this.headers.Authorization =  'Bearer ' + token;
       });
-    }
+
+  }
 
   obtenerParametros() {
      return this.tokenStorage.ObtenerParametros();
   }
+
+  
 }

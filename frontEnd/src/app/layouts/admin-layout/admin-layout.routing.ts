@@ -13,7 +13,8 @@ import { AprobacionHorasComponent } from '../../pages/aprobacion-horas/aprobacio
 import { AprobacionAutomaticosComponent } from '../../pages/aprobacion-automaticos/aprobacion-automaticos.component';
 import { HorasAutomaticasComponent } from '../../pages/horas-automaticas/horas-automaticas.component';
 import { SeguimientoEquiposComponent } from '../../pages/seguimiento-equipos/seguimiento-equipos.component';
-
+import { ReporteComponent } from '../../pages/reporte/reporte.component';
+import {SeguimientoEquipoReporteComponent  } from '../../pages/seguimiento-equipo-reporte/seguimiento-equipo-reporte.component';
 
 export const AdminLayoutRoutes: Routes = [
 
@@ -30,4 +31,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'aprobacionAutomaticos', component: AprobacionAutomaticosComponent },
     { path: 'horasAutomaticas', component: HorasAutomaticasComponent },
     { path: 'seguimientoEquipos', component: SeguimientoEquiposComponent },
+    { path: 'reporteFinanciero', component: ReporteComponent },
+    { path: 'seguimientoEquipoReporte', component: SeguimientoEquipoReporteComponent },
+
 ];

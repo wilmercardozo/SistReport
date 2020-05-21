@@ -55,9 +55,20 @@
                             </div>
                             <small class="control-error" >{{ getError('password')}}</small>
                         </div>                        
-                        <div class="text-center">
+                        <div *ngIf="carga" class="text-center animated fadeIn faster mensajesAlerta">
+                            <h4 class="alert-heading">Comprobando datos</h4>
+                            <p>
+                                <i class="fa fa-sync-alt fa-spin fa-2x"></i>
+                            </p>
+                            <p class="mb-0">
+                                Espere por favor
+                            </p>
+                        </div>
+                        
+                        <div *ngIf="!carga" class="text-center">
                             <button type="submit" class="btn btn-primary my-4" [disabled]="formGroup.invalid">Iniciar</button>
                         </div>
+                        
                         <div  *ngIf="alerta" class="alert alert-danger" role="alert">
                             {{mensajealerta}}
                           </div>

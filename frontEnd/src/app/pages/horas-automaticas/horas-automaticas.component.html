@@ -15,12 +15,32 @@
                         </div>
 
                         <div class="col-4 text-right">
-                            <button class="btn btn-sm btn-primary" (click)="nuevoRegistro(modalConfirmacion)">Agregar</button>
+                            <button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Agregar Registro" (click)="nuevoRegistro()">Agregar</button>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
-                <div *ngIf="!cargando && !sinData && listDataTable.length > 0">
+                <div class="card-body">                    
+                    <div class="row align-items-center">
+                        <div class="col-8">                           
+                        </div>
+                        <div class="col-4 text-right">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                    </div>
+                                    <input class="form-control"
+                                     placeholder="Buscar..."
+                                     type="text"
+                                     name="buscador"
+                                     [(ngModel)]="buscador"
+                                     (ngModelChange)="filtro()">                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div *ngIf="!cargando && !sinData && listDataTable.length > 0">                  
+
                     <table class="table table-striped">
                         <thead>
                         <tr>                         
@@ -36,10 +56,10 @@
                           <td>{{ registroFila.totalPorcentaje}}</td>  
                           <td>{{ registroFila.listaAutomaticos.length}}</td>                                                  
                           <td>
-                            <button class="btn btn-sm btn-info" (click)="edicionRegistro(modalConfirmacion, registroFila.idUsuario)">
+                            <button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Editar Registro" (click)="edicionRegistro(registroFila.idUsuario)">
                                 <i class="fa fa-pen"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" (click)="confirmarEliminacion(modalConfirmacion, registroFila.idUsuario)">
+                            <button class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar registro" (click)="confirmarEliminacion(modalConfirmacion,registroFila.idUsuario)">
                                 <i class="fa fa-trash"></i>
                             </button>
                           </td>
@@ -169,6 +189,46 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-danger" (click)="modal.close()">Cerrar</button>
-      <button type="button" *ngIf="btnDesabilitar" class="btn btn-outline-dark" (click)="eliminarRegistro(modalConfirmacion)">Eliminar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="eliminarRegistro(modalConfirmacion)">Eliminar</button>
     </div>
   </ng-template>
+  <!-- card -->
+  <div role="alert" id="notifiCorrecta" aria-live="assertive" aria-atomic="true" class="toast"> 
+    <div class="toast-header">
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar" (click)="cerrarToast()">
+            <span aria-hidden="true"></span>
+        </button>        
+        <div class="row">
+            <div class="col-lg-1">
+                <div _ngcontent-c10=""><i _ngcontent-c10="" class="ni ni-bell-55">
+                 </i><span _ngcontent-c10=""></span>
+                </div> 
+            </div>
+            <div class="col-lg-10">
+                <span *ngIf="delete"> {{msmExitosoDelete}} </span>
+                <span *ngIf="!delete"> {{msmExitosoPut}} </span>
+                
+            </div>
+        </div>      
+    </div>
+ 
+</div>
+<div role="alert" id="notifiError" aria-live="assertive" aria-atomic="true" class="toast"> 
+    <div class="toast-header">
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar" (click)="cerrarToast()">
+            <span aria-hidden="true"></span>
+        </button>        
+        <div class="row">
+            <div class="col-lg-1">
+                <div _ngcontent-c10=""><i _ngcontent-c10="" class="ni ni-bell-55">
+                 </i><span _ngcontent-c10=""></span>
+                </div> 
+            </div>
+            <div class="col-lg-10">
+                <span *ngIf="delete">{{msmErrorDelete}}</span>
+                <span *ngIf="!delete">{{msmErrorPut}}</span>
+            </div>
+        </div>      
+    </div>
+ 
+</div>

@@ -3303,3 +3303,91 @@
 .control-error{
     color: #ef7d7d;
 }
+
+#notifiCorrecta {
+    visibility: hidden;
+    position: fixed;
+    z-index: 2;
+    right: 2.5%;
+    top: 10%;
+    border: 1px solid  #5cb85c;;
+    border-radius: .25rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.1);
+    max-width: 310px;
+    width: 310px;
+    color: #fff;
+    background-color: #5cb85c;    
+    opacity: 1;
+    font-size: 0.875rem;
+  }
+   
+  #notifiCorrecta.mostrar {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 4.6s;
+    animation: fadein 0.5s, fadeout 0.5s 4.6s;
+  }
+
+  #notifiCorrecta.cerrar {
+    /* visibility: visible; */
+    -webkit-animation: fadeout 0.5s 4.8s;
+    animation: fadeout 0.5s 4.8s;
+  }
+
+  #notifiError {
+    visibility: hidden;
+    position: fixed;
+    z-index: 2;
+    right: 2.5%;
+    top: 10%;
+    border: 1px solid  #dc3545;
+    border-radius: .25rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.1);
+    max-width: 310px;
+    width: 310px;
+    color: #fff;
+    background-color: #dc3545;    
+    opacity: 1;
+    font-size: 0.875rem;
+  }
+   
+  #notifiError.mostrar {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 4.6s;
+    animation: fadein 0.5s, fadeout 0.5s 4.6s;
+  }
+
+  #notifiError.cerrar {
+    /* visibility: visible; */
+    -webkit-animation: fadeout 0.5s 4.8s;
+    animation: fadeout 0.5s 4.8s;
+  }
+   
+  @-webkit-keyframes fadein {
+    from {right: 0; opacity: 0;} 
+    to {right: 2.5%; opacity: 1;}
+  }
+   
+  @keyframes fadein {
+    from {right: 0; opacity: 0;}
+    to {right: 2.5%; opacity: 1;}
+  }
+   
+  @-webkit-keyframes fadeout {
+    from {right: 2.5%; opacity: 1;} 
+    to {right: 0; opacity: 0;}
+  }
+   
+  @keyframes fadeout {
+    from {right: 2.5%; opacity: 1;}
+    to {right: 0; opacity: 0;}
+  }
+
+  @-webkit-keyframes fadeout {
+    from {right: 2.5%; opacity: 1;} 
+    to {right: 0; opacity: 0;}
+  }
+   
+  @keyframes fadeout {
+    from {right: 2.5%; opacity: 1;}
+    to {right: 0; opacity: 0;}
+  }

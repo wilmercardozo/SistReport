@@ -6,4 +6,5 @@ export class UsuarioModel {
     documento: string;
     cargo: string;
     proyectoBase: string;
+    jefeInmediato: string;
 }

@@ -1,32 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TokenStorageService } from './token-storage.service';
-import { map } from 'rxjs/operators';
-import { MenuModel } from '../model/menu.model';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { registroModel } from '../model/registro.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MenuService {
+export class ReportesService {
 
   private headers = {Authorization:''}; 
-  private controlador: string = 'home';
+  private controlador: string = 'reporte';
 
   constructor(
     private http: HttpClient, 
     private tokenStorage: TokenStorageService,    
     private router: Router) { }
 
-
-  obtenerMenu() {
-    var metodo = 'ObtenerMenu';
-    var parametrosSesion = this.obtenerParametros();
-    const re = new registroModel();
-    re.parametro1= parametrosSesion.usuario;
-   return this.EnvioPeticion(metodo, re);
-  }
+  ObtenerReporteDedicacionPorProyecto(registro: registroModel) {
+      var metodo = 'DedicacionPorproyecto';
+      var parametros = registro;
+       return this.EnvioPeticion(metodo, parametros);
+    }
 
   EnvioPeticion(metodo: string, parametros) {
     this.obtenerToken();
@@ -44,14 +40,13 @@ export class MenuService {
 
   obtenerToken() {
     this.tokenStorage.select$()
-      .subscribe(resp => {
+      .subscribe(resp => {         ;
        var token: string=  resp == '' || resp == null || resp == undefined?  this.tokenStorage.ObtenerCookie(): resp         
        token == '' || token == null || token == undefined? this.router.navigateByUrl('/login'):  
        this.headers.Authorization =  'Bearer ' + token; 
       });
 
   }
-
   obtenerParametros() {
      return this.tokenStorage.ObtenerParametros();
   }

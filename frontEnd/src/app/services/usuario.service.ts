@@ -1,57 +1,46 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TokenStorageService } from './token-storage.service';
-import { LoginService } from './login.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { AutomaticoModel } from '../model/automatico.model';
-import { registroModel } from '../model/registro.model';
-import { AutomaticoPorUsuarioModel } from '../model/automaticoPorUsuario.model';
+import { ProyectoBaseModel } from '../model/proyectoBase.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AutomaticoService {
-  private headers = {Authorization:''};
-  private controlador = 'automatico';
- 
+export class UsuarioService {
+  private headers = {Authorization: ''};
+  private controlador = 'usuario';
 
   constructor(
-    private http: HttpClient, 
-    private tokenStorage: TokenStorageService,    
+    private http: HttpClient,
+    private tokenStorage: TokenStorageService,
     private router: Router) { }
-
 
     ObtenerProyectos() {
       const metodo = 'ObtenerProyectos';
       const parametros = '';
       return this.EnvioPeticion(metodo, parametros);
-    }  
-    
+    }
+
     ObtenerUsuarios() {
       const metodo = 'ObtenerUsuarios';
       const parametros = '';
       return this.EnvioPeticion(metodo, parametros);
-    }  
+    }
 
-    ObtenerAutomaticosPorUsuario() {
-      const metodo = 'ObtenerAutomaticosPorUsuario';
-      const parametros = '';
+    ActualizarProyectoBase(proyectoBase: ProyectoBaseModel ) {
+      const metodo = 'ActualizarProyectoBase';
+      const parametros = proyectoBase;
       return this.EnvioPeticion(metodo, parametros);
-    }    
+    }
 
-    ActualizarAutomaticosPorUsuario( automatico: AutomaticoPorUsuarioModel ) {
-      const metodo = 'GuardarAutomatico';
-      const parametros = automatico;
+    EliminarProyectoBase( proyectoBase: ProyectoBaseModel ) {
+      const metodo = 'EliminarProyectoBase';
+      const parametros = proyectoBase;
       return this.EnvioPeticion(metodo, parametros);
-    }  
-    
-    EliminarAutomaticosPorUsuario(registro: registroModel) {
-      const metodo = 'DesabilitarAutomatico';
-      const parametros = registro;
-      return this.EnvioPeticion(metodo, parametros);
-    } 
-       
+    }
+
     EnvioPeticion(metodo: string, parametros) {
       this.obtenerToken();
       const headers = this.headers;
@@ -60,7 +49,7 @@ export class AutomaticoService {
       return this.http.post<any>(url, parametros, { headers })
         .pipe(
           map((resp) => {
-            const respJson = typeof(resp) == 'object' ?  resp : JSON.parse(resp);
+            const respJson = typeof(resp) === 'object' ?  resp : JSON.parse(resp);
             return respJson;
           })
         );
@@ -73,7 +62,8 @@ export class AutomaticoService {
          token === '' || token == null || token === undefined ? this.router.navigateByUrl('/login') :
          this.headers.Authorization =  'Bearer ' + token;
         });
-      }
+
+    }
 
     obtenerParametros() {
        return this.tokenStorage.ObtenerParametros();
