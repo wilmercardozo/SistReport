@@ -1,0 +1,68 @@
+server:
+  port: 53313
+  servlet:
+    context-path: /api
+spring:
+  freemarker:
+    cache: false
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  application:
+    name: sistreport-service
+  datasource:
+    #url: jdbc:mysql://localhost:3306/sist-report
+    #username: root
+    url: jdbc:sqlserver://localhost;database=ReporteTiempos
+    username: sa
+    password: POIzxc01!
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        #dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        dialect: org.hibernate.dialect.SQLServerDialect
+    open-in-view: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+jwt:
+  route:
+    authentication:
+      path: /login/authenticate
+  header: Authorization
+  expiration: 604800
+  secret: flamingo123
+
+#ldap properties
+manager:
+  dn: CN=Ldap Ecommerce,OU=AF-Administradores de Tareas o Svcios,DC=flamingo,DC=com,DC=co
+  password: Ld4p3C0mm3rc3*2oi9*
+user:
+  search:
+    base: OU=Ecommerce,OU=Usuarios,DC=flamingo,DC=com,DC=co
+    filter: sAMAccountName={0}
+ldap:
+  url: ldap://172.16.83.2:389
+
+springdoc:
+  cache:
+    disabled: false
