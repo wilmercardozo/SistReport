@@ -1,11 +1,10 @@
 package com.uan.sistreport.service;
 
-import com.sun.tools.javac.util.List;
 import com.uan.sistreport.entity.EstadoRegistro;
 import com.uan.sistreport.repository.EstadoRegistroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.*;
 @Service
 public class EstadoRegistroService {
 

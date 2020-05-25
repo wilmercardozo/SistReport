@@ -25,6 +25,18 @@ export class ParametrosService {
       return this.EnvioPeticion(metodo, parametros);
     }
 
+    obtenerHoraspendientes() {
+      const metodo = 'ObtenerHoraspendientes';
+      const parametros = '';
+      return this.EnvioPeticion(metodo, parametros);
+    }
+
+    aprobacionHorasPendientes(registro: registroModel) {
+      const metodo = 'AprobacionHorasPendientes';
+      const parametros = registro;
+      return this.EnvioPeticion(metodo, parametros);
+    }
+
     obtenerParametrosTipo( registro: registroModel) {
       const metodo = 'ObtenerParametrosTipo';
       const parametros = registro;

@@ -5,15 +5,13 @@ import com.uan.sistreport.model.UsuarioDto;
 import com.uan.sistreport.service.UsuarioService;
 import com.uan.sistreport.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
 public class UserController {
 
 	@Autowired
@@ -26,6 +24,14 @@ public class UserController {
 		usuario = usuarioService.createUser(usuario);
 		return ResponseEntity.ok(usuario);
 	}
+
+	@PostMapping("usuario/{id}")
+	public ResponseEntity<Usuario> createAuthenticationToken(@PathVariable("id") String id)  {
+		Usuario usuario = usuarioService.getUsusarioByUsuario(id);
+		return ResponseEntity.ok(usuario);
+	}
+
+
 }
 
 

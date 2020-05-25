@@ -17,9 +17,8 @@ export class TokenStorageService {
 
   constructor() { }
 
-
   public select$ = () => this.token$.asObservable();
-  public dispatch( token, login: LoginModel ) {
+  public dispatch( token, login: LoginModel) {
 
     sessionStorage.clear();
     sessionStorage.setItem('parametros', CryptoJS.AES.encrypt(JSON.stringify(login), this.llave).toString());
@@ -27,7 +26,16 @@ export class TokenStorageService {
 
     this.token = token;
     this.token$.next(this.token);
+  }
 
+  guardarRutas(rutas) {
+    sessionStorage.removeItem('nav');
+    sessionStorage.setItem('nav', CryptoJS.AES.encrypt(JSON.stringify(rutas), this.llave).toString());
+  }
+
+  obtenerRutas() {
+    const rutas = JSON.parse(CryptoJS.AES.decrypt(sessionStorage.getItem('nav'),this.llave).toString(CryptoJS.enc.Utf8));
+    return rutas; 
   }
 
   ObtenerParametros() {

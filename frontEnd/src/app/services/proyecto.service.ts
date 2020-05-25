@@ -47,13 +47,13 @@ export class ProyectoService {
     const parametros = RegistroVenta;
     return this.EnvioPeticion(metodo, parametros);
   }
- 
-  DesabilitarProyecto(RegistroVenta: string) {
+
+  DesabilitarProyecto(RegistroVenta) {
     const metodo = 'DesabilitarProyecto';
     const parametros = RegistroVenta;
     return this.EnvioPeticion(metodo, parametros);
   }
- 
+
   EnvioPeticion(metodo: string, parametros) {
     this.obtenerToken();
     const headers = this.headers;

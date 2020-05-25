@@ -15,23 +15,24 @@ import { HorasAutomaticasComponent } from '../../pages/horas-automaticas/horas-a
 import { SeguimientoEquiposComponent } from '../../pages/seguimiento-equipos/seguimiento-equipos.component';
 import { ReporteComponent } from '../../pages/reporte/reporte.component';
 import {SeguimientoEquipoReporteComponent  } from '../../pages/seguimiento-equipo-reporte/seguimiento-equipo-reporte.component';
+import { LoginGuard } from 'src/app/guards/login.guard';
 
 export const AdminLayoutRoutes: Routes = [
 
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'user-profile', component: UserProfileComponent },
-    { path: 'proyectos', component: ProyectosComponent },
-    { path: 'parametros', component: ParametrosComponent },
-    { path: 'usuarios', component: UsuariosComponent },
-    { path: 'roles', component: RolesComponent },
-    { path: 'paginas', component: PaginasComponent },
-    { path: 'notificaciones', component: NotificacionesComponent },
-    { path: 'reporteTiempos', component: ReporteTiemposComponent },
-    { path: 'aprobacionHoras', component: AprobacionHorasComponent },
-    { path: 'aprobacionAutomaticos', component: AprobacionAutomaticosComponent },
-    { path: 'horasAutomaticas', component: HorasAutomaticasComponent },
-    { path: 'seguimientoEquipos', component: SeguimientoEquiposComponent },
-    { path: 'reporteFinanciero', component: ReporteComponent },
-    { path: 'seguimientoEquipoReporte', component: SeguimientoEquipoReporteComponent },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
+    { path: 'user-profile', component: UserProfileComponent, canActivate: [LoginGuard]  },
+    { path: 'proyectos', component: ProyectosComponent , canActivate: [LoginGuard]},
+    { path: 'parametros', component: ParametrosComponent , canActivate: [LoginGuard]},
+    { path: 'usuarios', component: UsuariosComponent , canActivate: [LoginGuard]},
+    { path: 'roles', component: RolesComponent , canActivate: [LoginGuard]},
+    { path: 'paginas', component: PaginasComponent , canActivate: [LoginGuard]},
+    { path: 'notificaciones', component: NotificacionesComponent, canActivate: [LoginGuard] },
+    { path: 'reporteTiempos', component: ReporteTiemposComponent , canActivate: [LoginGuard]},
+    { path: 'aprobacionHoras', component: AprobacionHorasComponent, canActivate: [LoginGuard] },
+    { path: 'aprobacionAutomaticos', component: AprobacionAutomaticosComponent , canActivate: [LoginGuard]},
+    { path: 'horasAutomaticas', component: HorasAutomaticasComponent , canActivate: [LoginGuard]},
+    { path: 'seguimientoEquipos', component: SeguimientoEquiposComponent , canActivate: [LoginGuard]},
+    { path: 'reporteFinanciero', component: ReporteComponent , canActivate: [LoginGuard]},
+    { path: 'seguimientoEquipoReporte', component: SeguimientoEquipoReporteComponent , canActivate: [LoginGuard]},
 
 ];

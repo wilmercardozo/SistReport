@@ -19,44 +19,40 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="padding-bottom: 0px; border-color: #fff3cd; color: #856404;background: #fff3cd;">            
-                        <form>
-                            <div class="row">
-                                <div class="col-lg-1">
-                                   <strong>Filtros</strong> 
-                                </div>                               
-                                <div class="col-lg-3">
-                                    <div class="form-group mb-3">                                    
-                                        <div class="input-group input-group-alternative">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="ni ni-archive-2"></i></span>
-                                            </div>
-                                            <input                                                 
-                                                type="text" 
-                                                class="form-control"
-                                                name="usurio"
-                                                placeholder="Nombre Usuario" 
-                                                [(ngModel)]="filtroUsuario"
-                                                (ngModelChange)="filtrarRegistros()"/>
-                                        </div>                                   
-                                    </div>                               
-                                </div> 
+                    <div class="row align-items-center">
+                        <div class="col-8">                           
+                        </div>
+                        <div class="col-4 text-right">
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                    </div>
+                                    <input class="form-control"
+                                     placeholder="Buscar..."
+                                     type="text"
+                                     name="buscador"
+                                     [(ngModel)]="buscador"
+                                     (ngModelChange)="filtro()">                                 
+                                </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="d-flex justify-content-between p-2">
-                        <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
-                        </ngb-pagination>
- 
-                        <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
-                          <option [ngValue]="2">2 Registros por pagina</option>
-                          <option [ngValue]="4">4 Registros por pagina</option>
-                          <option [ngValue]="10">10 Registros por pagina</option>
-                          <option [ngValue]="50">50 Registros por pagina</option>
-                          <option [ngValue]="100">100 Registros por pagina</option>
-                        </select>
-                    </div>
-                    <div class="table-responsive">
+                        </div>
+                    </div>                   
+                   
+                    <div class="table-responsive" *ngIf="listDataTable.length > 0">
+                        <div class="d-flex justify-content-between p-2">
+                            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                            </ngb-pagination>
+     
+                            <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                              <option [ngValue]="2">2 Registros por pagina</option>
+                              <option [ngValue]="4">4 Registros por pagina</option>
+                              <option [ngValue]="10">10 Registros por pagina</option>
+                              <option [ngValue]="50">50 Registros por pagina</option>
+                              <option [ngValue]="100">100 Registros por pagina</option>
+                            </select>
+                        </div>
+
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>

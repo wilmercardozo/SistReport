@@ -49,7 +49,7 @@ export class ReporteTiemposComponent implements OnInit {
   public msmErrorPut = 'Se presentó un error al guardar la información';
   public msmExitosoDelete = 'Se elimino la información con éxito';  
   public msmErrorDelete = 'Se presentó un error al eliminar la información';
-  
+
   constructor(
     private servicio: RegistroHorasService,
     private utiles: UtilesService,
@@ -57,15 +57,15 @@ export class ReporteTiemposComponent implements OnInit {
     private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.showCard = true;   
-    this.obtenerRegistroHoras();    
+    this.showCard = true;
+    this.obtenerRegistroHoras();
   }
-  
+
   obtenerRegistroHoras() {
     this.antesPeticionRH();
     this.servicio.ObtenerRegistroHorasPorUsuario()
     .subscribe(resp => {
-      resp.estado == true ? this.listRegistroHoras = typeof(resp.mensaje1) == 'object' ?  resp.mensaje1 : JSON.parse(resp.mensaje1) : [];
+      resp.estado === true ? this.listRegistroHoras = typeof(resp.mensaje1) == 'object' ?  resp.mensaje1 : JSON.parse(resp.mensaje1) : [];
       this.despuesPeticionRH();
     }, (error) => {
       console.error(error);

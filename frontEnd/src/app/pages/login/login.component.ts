@@ -3,6 +3,8 @@ import { LoginModel } from 'src/app/model/login.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/login.service';
+import { MenuService } from 'src/app/services/menu.service';
+import { promise } from 'protractor';
 
 @Component({
   selector: 'app-login',
@@ -17,9 +19,14 @@ export class LoginComponent implements OnInit {
   carga: boolean = false;
   mensajealerta: string;
 
-  constructor(private loginSerivce: LoginService, private fb: FormBuilder, private router: Router) { }
+  constructor(
+    private loginSerivce: LoginService,
+     private fb: FormBuilder,
+     private menuServicio: MenuService,
+     private router: Router) { }
 
   ngOnInit() {
+    sessionStorage.clear();
     this.crearFormulario();
   }
 
@@ -44,7 +51,7 @@ export class LoginComponent implements OnInit {
     this.loginModel = this.formGroup.value;
     this.loginSerivce.login(this.loginModel)
       .subscribe(resp => {
-        if(resp.estado){
+        if(resp.estado) {        
         this.router.navigateByUrl('/proyectos');
         }
        else {
@@ -59,7 +66,7 @@ export class LoginComponent implements OnInit {
       this.mensajealerta='Se presentó un problema al  validar las credenciales';
     });
 
-  }
+  }  
 
   public getError(controlName: string): string {
     let error = '';

@@ -11,7 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="proyectos" )
@@ -25,8 +27,8 @@ import java.util.List;
 public class Proyecto {
     @Id
     private String registroventa;
+
     @NotNull
-    @NotBlank
     private String proyecto;
 
     @NotNull
@@ -36,10 +38,8 @@ public class Proyecto {
     @NotNull
     @NotBlank
     private String descripcion;
-
     private Date fechaInicio;
     private Date fechaFin;
-
     private String clasificacion1;
     private String clasificacion2;
     private String clasificacion3;
@@ -47,6 +47,9 @@ public class Proyecto {
     private boolean costo;
     private boolean gasto;
     private boolean activo;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="proyecto", cascade = CascadeType.PERSIST)
+    Set<Usuario> responsables = new HashSet();
+
     @JsonIgnore
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)

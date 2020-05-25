@@ -44,7 +44,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 System.out.println("El token ha expirado");
             }
         } else {
-            logger.warn("la peticion no tiene Bearer token en cabecera");
+           // logger.warn("la peticion no tiene Bearer token en cabecera");
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);

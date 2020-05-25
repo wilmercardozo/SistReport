@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ParametroModel } from 'src/app/model/parametro.model';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { UtilesService } from 'src/app/services/utiles.service';
+import { registroModel } from 'src/app/model/registro.model';
 
 declare interface ParametrosRegistroHoras {
   horasDiarias: string;
@@ -30,7 +31,7 @@ declare interface ParametrosCorreo {
 })
 export class ParametrosComponent implements OnInit {
 
-  public titulopagina1 = 'Parametros Registro Horas';
+  public titulopagina1 = 'Parametros del sistema';
   public titulopagina2 = 'Parametros Correo ';
   public page = 1;
   public pageSize = 4;
@@ -38,7 +39,15 @@ export class ParametrosComponent implements OnInit {
   public formGroup: FormGroup;
   public formGroupCorreo: FormGroup;
   public ModeloRH: ParametrosRegistroHoras;
-  public ModeloCorreo: ParametrosCorreo;  
+  public ModeloCorreo: ParametrosCorreo;
+  public horasAutomaticas;
+  public horasRegistrar;
+  public horasCalificar;
+  public pendienteAutomaticos = 'Horas pendientes automáticas'; 
+  public pendienteRegistrar = 'Horas pendientes por registrar';
+  public pendienteCalificar ='Horas pendientes por calificar';
+  
+
   public tipoError = true;
   public msmExitoso = 'Se almaceno la información con éxito';  
   public msmErrorPUT = 'Se presentó un error al guardar la información';
@@ -56,9 +65,47 @@ export class ParametrosComponent implements OnInit {
     this.formularioRegistroHoras();
     this.formularioCorreo();
     this.obtenerParametros();
+    this.obtenerHorasPendientes();
   }
 
-  public obtenerParametros() {
+  obtenerHorasPendientes() {
+    this.servicio.obtenerHoraspendientes()
+    .subscribe(resp => {
+      if (resp.estado === true) {
+        const registros: ParametroModel []= typeof(resp.mensaje1) === 'object' ?  resp : JSON.parse(resp.mensaje1);
+        this.asignarHoraspendientes(registros);
+      
+      } else {
+      console.error(resp.mensaje1);
+      this.tipoError= true;
+      this.utiles.notificacionError();
+      }
+
+    }, (error) => {
+      console.error(error);
+      this.tipoError= true;
+      this.utiles.notificacionError(); 
+      this.router.navigate(['login']);
+      });
+  }
+  asignarHoraspendientes(registros: ParametroModel[]) {
+    const variables = ['horaspendientesRegistrar', 'horasPendientesGenerarAutomaticos', 'horasPendientesPorCalificar']
+    registros.forEach(pro =>{
+      if (variables[0] === pro.variable) {
+        this.horasRegistrar = pro.valor
+      }
+      
+      if (variables[1] === pro.variable) {
+        this.horasAutomaticas = pro.valor
+      }
+      
+      if (variables[2] === pro.variable) {
+        this.horasCalificar = pro.valor
+      }
+    })
+  }
+
+  obtenerParametros() {
     this.servicio.obtenerTodosParametros()
     .subscribe(resp => {
       if (resp.estado === true) {
@@ -79,13 +126,13 @@ export class ParametrosComponent implements OnInit {
       });
   }
 
-  public armarEntidades() {
+ armarEntidades() {
     this.asignarValorRH();
     this.asignarValorCorreo();
     this.AsignaValoresFormularioCorreo();
   }
 
-  public asignarValorRH() {
+  asignarValorRH() {
 
     let horasDiarias = '', fechaDisponibleInicio = '', fechaDisponibleFin = '', diaInicioCorte = '', diaFinCorte = '', frecuenciaCorte = '';
 
@@ -124,7 +171,7 @@ export class ParametrosComponent implements OnInit {
       frecuenciaCorte: frecuenciaCorte};
   }
 
-  public asignarValorCorreo() {
+  asignarValorCorreo() {
 
     let Servidor = '', puerto = '', correo = '', usuario = '', clave = '';
 
@@ -171,7 +218,7 @@ export class ParametrosComponent implements OnInit {
     });
   }
   
-  public formularioCorreo() {
+  formularioCorreo() {
     this.formGroupCorreo = this.fb.group({
       Servidor: ['', [Validators.required, Validators.maxLength(300)]],
       puerto: ['', [Validators.required, Validators.maxLength(6),this.validarValorMinimo]],
@@ -204,7 +251,7 @@ export class ParametrosComponent implements OnInit {
    });
  }
 
-  public armarObjetoFecha(fecha) {
+  armarObjetoFecha(fecha) {
     const ObjetoFecha = {
       year: new Date(fecha).getFullYear(),
       month: new Date(fecha).getMonth() + 1,
@@ -213,7 +260,7 @@ export class ParametrosComponent implements OnInit {
     return ObjetoFecha;
   }
 
-  public validarValorMinimo(control: AbstractControl) {
+  validarValorMinimo(control: AbstractControl) {
     let result = null;
     let valor: number=  parseInt(control.value);    
     if (!Number.isInteger(valor) || valor === 0) {
@@ -222,7 +269,7 @@ export class ParametrosComponent implements OnInit {
     return result;
   }
 
-  public validarCorreo( control: AbstractControl) {
+  validarCorreo( control: AbstractControl) {
     let result = null;
     const rexg = /^[_a-zA-Z0-9-]+(.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*(.[a-zA-Z]{2,4})$/i;
     const texto = control.value; 
@@ -232,7 +279,7 @@ export class ParametrosComponent implements OnInit {
     return result
   }
 
-  public getErrorRH(controlName: string): string {
+  getErrorRH(controlName: string): string {
     let error = '';
     const control = this.formGroup.get(controlName);
     if (control.touched && control.errors != null) {
@@ -242,7 +289,7 @@ export class ParametrosComponent implements OnInit {
     return error;
   }
 
-  public getErrorCorreo(controlName: string): string {
+  etErrorCorreo(controlName: string): string {
     let error = '';
     const control = this.formGroupCorreo.get(controlName);
     if (control.touched && control.errors != null) {
@@ -252,7 +299,7 @@ export class ParametrosComponent implements OnInit {
     return error;
   }
 
-  public formatearError(objeto: string): string {
+  formatearError(objeto: string): string {
     if (objeto === '') {
       return objeto;
     }

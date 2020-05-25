@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
 public class JwtAuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;

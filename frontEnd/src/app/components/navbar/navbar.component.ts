@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MenuService } from 'src/app/services/menu.service';
 import { MenuModel } from 'src/app/model/menu.model';
+import { error } from 'protractor';
 
 @Component({
   selector: 'app-navbar',
@@ -11,9 +12,10 @@ import { MenuModel } from 'src/app/model/menu.model';
 })
 export class NavbarComponent implements OnInit {
   public focus;
-  public listTitles: any[]= [];
+  public listTitles: any[] = [];
   public location: Location;
   private menu: MenuModel [] = [];
+  public nombreUsuario = '';
 
   constructor(
     location: Location,
@@ -24,13 +26,14 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.obtenerMenu();  
+    this.obtenerMenu();
+    this.obtenerNombreUsuario();
   }
   getTitle() {
     let titlee = this.location.prepareExternalUrl(this.location.path());
     if (titlee.charAt(0) === '#') {
       titlee = titlee.slice(1);
-    }   
+    }
 
     for (let item = 0; item < this.listTitles.length; item++) {
       for (let pagina = 0; pagina < this.listTitles[item].paginas.length; pagina++) {
@@ -48,15 +51,28 @@ export class NavbarComponent implements OnInit {
     this.servicio.obtenerMenu()
       .subscribe((resp) => {
         if (resp.estado === true) {
-          this.menu= typeof(resp.mensaje1) === 'object' ?  resp : JSON.parse(resp.mensaje1);
+          this.menu = typeof(resp.mensaje1) === 'object' ?  resp : JSON.parse(resp.mensaje1);
           this.listTitles = this.menu.filter(listTitle => listTitle);
-        }      
+        }
 
       }, (error) => {
         console.log(error);
-        this.router.navigate(['login']);  
+        this.router.navigate(['login']);
       });
 
+  }
+
+  obtenerNombreUsuario() {
+    this.servicio.obtenerNombreUsuario()
+    .subscribe(resp => {
+      resp.estado === true ? this.nombreUsuario = resp.mensaje1 : this.nombreUsuario = 'Usuario No Registrado';
+    }, (error) => {
+      this.nombreUsuario = 'Usuario No Registrado';
+      console.log(error);
+    });
+  }
+  salir() {
+    this.router.navigateByUrl('/proyectos');
   }
 
 }

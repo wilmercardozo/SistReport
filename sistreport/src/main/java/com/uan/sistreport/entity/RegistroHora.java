@@ -34,8 +34,7 @@ public class RegistroHora {
     private Integer minutos;
 
     private boolean activo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol", fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<Usuario> usuarioList;
+
     @JsonIgnore
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)

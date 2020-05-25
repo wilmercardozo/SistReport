@@ -29,20 +29,26 @@ public class Rol {
     @NotBlank
     private String nombreRol;
     private boolean activo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol", fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<Usuario> usuarioList;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="rol", cascade = CascadeType.ALL)
+    Set<Usuario> usuarios = new HashSet();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="rol", cascade = CascadeType.ALL)
+    Set<Pagina> paginas = new HashSet();
+
     @JsonIgnore
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date createdAt;
+
     @JsonIgnore
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt;
 
-    @ManyToMany(cascade = {
+   /* @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
@@ -52,5 +58,5 @@ public class Rol {
     )
     private Set<Funcion> funcionesrol = new HashSet<>();
 
-
+    */
 }

@@ -11,32 +11,40 @@ import { registroModel } from '../model/registro.model';
 })
 export class MenuService {
 
-  private headers = {Authorization:''}; 
-  private controlador: string = 'home';
+  private headers = {Authorization: ''};
+  private controlador = 'home';
 
   constructor(
-    private http: HttpClient, 
-    private tokenStorage: TokenStorageService,    
+    private http: HttpClient,
+    private tokenStorage: TokenStorageService,
     private router: Router) { }
 
 
   obtenerMenu() {
-    var metodo = 'ObtenerMenu';
-    var parametrosSesion = this.obtenerParametros();
+    const metodo = 'ObtenerMenu';
+    const parametrosSesion = this.obtenerParametros();
     const re = new registroModel();
-    re.parametro1= parametrosSesion.usuario;
+    re.parametro1 = parametrosSesion.usuario;
+    return this.EnvioPeticion(metodo, re);     
+  }
+
+  obtenerNombreUsuario() {
+    const metodo = 'ObtenerNombreUsuario';
+    const parametrosSesion = this.obtenerParametros();
+    const re = new registroModel();
+    re.parametro1 = parametrosSesion.usuario;
    return this.EnvioPeticion(metodo, re);
   }
 
   EnvioPeticion(metodo: string, parametros) {
     this.obtenerToken();
     const headers = this.headers;
-    var url =`${this.tokenStorage.ObtenerURL()}/${this.controlador}/${metodo}`;
+    const url = `${this.tokenStorage.ObtenerURL()}/${this.controlador}/${metodo}`;
 
     return this.http.post<any>(url, parametros, { headers })
       .pipe(
         map((resp) => {
-          const respJson = typeof(resp) == 'object' ?  resp : JSON.parse(resp);
+          const respJson = typeof(resp) === 'object' ?  resp : JSON.parse(resp);
           return respJson;
         })
       );
@@ -45,9 +53,9 @@ export class MenuService {
   obtenerToken() {
     this.tokenStorage.select$()
       .subscribe(resp => {
-       var token: string=  resp == '' || resp == null || resp == undefined?  this.tokenStorage.ObtenerCookie(): resp         
-       token == '' || token == null || token == undefined? this.router.navigateByUrl('/login'):  
-       this.headers.Authorization =  'Bearer ' + token; 
+       const token =  resp === '' || resp == null || resp === undefined ?  this.tokenStorage.ObtenerCookie() : resp;
+       token === '' || token == null || token === undefined? this.router.navigateByUrl('/login') :
+       this.headers.Authorization =  'Bearer ' + token;
       });
 
   }

@@ -1,0 +1,4 @@
+mvn sonar: sonar \
+  -Dsonar.projectKey = sistreport \
+  -Dsonar.host.url = http: // localhost: 9000 \
+  -Dsonar.login = a16ecfcecd46f6fb59e6ee9334c95918118c0b21

@@ -6,12 +6,13 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="usuarios" )
@@ -24,24 +25,57 @@ import java.util.List;
 @Builder
 public class Usuario {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    @NotBlank
     private String usuario;
 
     @NotNull
     @NotBlank
     private String password;
 
-    private boolean activo;
+    @NotNull
+    @NotBlank
+    private String nombres;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ROL", nullable = false, updatable = false)
+    @NotNull
+    @NotBlank
+    private String email;
+
+    @NotNull
+    @NotBlank
+    private String documento;
+
+    @NotNull
+    @NotBlank
+    private String proyectoBase;
+
+    @NotNull
+    @NotBlank
+    private String jefeInmediato;
+
+    @NotNull
+    @NotBlank
+    private String cargo;
+
+    @ManyToOne
+    @JoinColumn(name ="FK_RolId")
     private Rol rol;
+
+    @ManyToOne
+    @JoinColumn(name ="FK_ResponsablesId")
+    private Proyecto proyecto;
+
+    private boolean activo;
 
     @JsonIgnore
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date createdAt;
+
     @JsonIgnore
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

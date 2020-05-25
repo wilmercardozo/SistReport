@@ -6,6 +6,7 @@ import { ProyectoModel } from 'src/app/model/proyecto.model';
 import { UsuarioModel } from 'src/app/model/usuario.model';
 import { ProyectoBaseModel } from 'src/app/model/proyectoBase.model';
 import { registroModel } from 'src/app/model/registro.model';
+import { UtilesService } from 'src/app/services/utiles.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -32,12 +33,14 @@ export class UsuariosComponent implements OnInit {
   public modalUsuario = '';
   public modalProyecto = '0';
   public idUsuario = 0;
+  public buscador = '';
   public mensaje1 = ' Seleccione un proyecto de la lista';
   public mensaje2 = ' Ocurrió un error  al guardar la información';
   public mensaje3 = 'Asignación proyecto base';
 
   constructor(
     private servicio: UsuarioService,
+    private utiles: UtilesService,
     private router: Router,
     private modalService: NgbModal) { }
 
@@ -69,14 +72,34 @@ export class UsuariosComponent implements OnInit {
       .subscribe(resp => {
         this.listUsuarios =  typeof(resp.mensaje1) === 'object' ?  resp : JSON.parse(resp.mensaje1);
         this.collectionSize = this.listUsuarios.length;
+        this.pageSize = this.utiles.calcularPaginacion( this.collectionSize)
         this.cargando = false;
         this.sinData = this.listUsuarios.length === 0 ? true : false;
-        this.filtrarRegistros();
+        this.filtro();
       }, (error) => {
         this.router.navigate(['login']);
         this.cargando = false;
         this.sinData = this.listUsuarios.length === 0 ? true : false;
         });
+  }
+
+  filtro() {
+    const listArmado: UsuarioModel [] = [];
+    if (this.buscador.length ===  0 || this.buscador === undefined || this.buscador === null) {
+      this.listUsuariosFiltro = this.listUsuarios;;
+      return;
+    }
+
+    this.listUsuarios.forEach(pro => {      
+    const variable =  `${pro.nombre} ${pro.email} ${pro.cargo} ${pro.jefeInmediato} ${pro.proyectoBase}`;
+    variable.toLowerCase().indexOf(this.buscador) > -1 ? listArmado.push(pro) : null;
+    });
+
+    this.sinData = listArmado.length > 0 ? false : true;
+    this.listUsuariosFiltro = listArmado;
+    this.collectionSize = this.listUsuariosFiltro.length;
+    this.calcularpginacion();
+    //this.pageSize =50; // this.utiles.calcularPaginacion( this.listUsuariosFiltro.length);
   }
 
   public filtrarRegistros() {
